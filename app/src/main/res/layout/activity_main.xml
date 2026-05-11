@@ -1,19 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/colorBackground">
 
+    <!-- 상단 정렬 Spinner -->
+    <LinearLayout
+        android:id="@+id/layoutTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="내 여행 목록"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <Spinner
+            android:id="@+id/spinnerSort"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:entries="@array/sort_options"
+            android:background="@android:color/transparent"
+            android:popupBackground="@color/white"/>
+    </LinearLayout>
+
+    <!-- 빈 목록 안내 텍스트 -->
     <TextView
+        android:id="@+id/tvEmptyTrips"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_centerInParent="true"
+        android:text="@string/no_trips"
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:visibility="gone"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- 여행 목록 ListView -->
+    <ListView
+        android:id="@+id/listViewTrips"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/layoutTopBar"
+        android:layout_above="@+id/bottomSpace"
+        android:divider="@color/colorDivider"
+        android:dividerHeight="1dp"
+        android:padding="8dp"
+        android:clipToPadding="false"/>
+
+    <View
+        android:id="@+id/bottomSpace"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_alignParentBottom="true"/>
+
+    <!-- FAB 스타일 추가 버튼 -->
+    <ImageButton
+        android:id="@+id/btnAddTrip"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_input_add"
+        android:background="@drawable/fab_background"
+        android:contentDescription="새 여행 추가"
+        android:elevation="6dp"/>
+
+</RelativeLayout>
