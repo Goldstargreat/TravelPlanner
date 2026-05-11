@@ -22,9 +22,9 @@ public class Trip implements Serializable {
         this.startDate = startDate;
         this.endDate = endDate;
         this.coverImagePath = "";
-        this.schedules = new ArrayList<>();
-        this.photoPaths = new ArrayList<>();
-        this.diaryEntries = new ArrayList<>();
+        this.schedules = new ArrayList<Schedule>();
+        this.photoPaths = new ArrayList<String>();
+        this.diaryEntries = new ArrayList<DiaryEntry>();
     }
 
     public int getId() { return id; }
@@ -46,18 +46,26 @@ public class Trip implements Serializable {
     public void addDiary(DiaryEntry d) { diaryEntries.add(d); }
 
     public void removeSchedule(int index) {
-        if (index >= 0 && index < schedules.size()) schedules.remove(index);
+        if (index >= 0 && index < schedules.size()) {
+            schedules.remove(index);
+        }
     }
     public void removePhoto(int index) {
-        if (index >= 0 && index < photoPaths.size()) photoPaths.remove(index);
+        if (index >= 0 && index < photoPaths.size()) {
+            photoPaths.remove(index);
+        }
     }
     public void removeDiary(int index) {
-        if (index >= 0 && index < diaryEntries.size()) diaryEntries.remove(index);
+        if (index >= 0 && index < diaryEntries.size()) {
+            diaryEntries.remove(index);
+        }
     }
 
     public String getDateRange() {
         return startDate + " ~ " + endDate;
     }
 
-    public int getScheduleCount() { return schedules.size(); }
+    public int getScheduleCount() {
+        return schedules.size();
+    }
 }
