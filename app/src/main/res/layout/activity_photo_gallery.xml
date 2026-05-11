@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorBackground">
+
+    <!-- Gallery 위젯: 상단 가로 슬라이더 -->
+    <Gallery
+        android:id="@+id/galleryPhotos"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@color/colorTextPrimary"
+        android:spacing="4dp"/>
+
+    <!-- 선택된 사진 상세 보기 (FrameLayout 오버레이 전환) -->
+    <FrameLayout
+        android:id="@+id/framePhotoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- GridView: 전체 사진 썸네일 -->
+        <GridView
+            android:id="@+id/gridViewPhotos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="3"
+            android:horizontalSpacing="2dp"
+            android:verticalSpacing="2dp"
+            android:stretchMode="columnWidth"
+            android:padding="2dp"/>
+
+        <!-- 사진 없을 때 안내 -->
+        <TextView
+            android:id="@+id/tvNoPhotos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/no_photos"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="16sp"
+            android:visibility="gone"/>
+
+        <!-- 사진 크게 보기 오버레이 -->
+        <RelativeLayout
+            android:id="@+id/layoutPhotoDetail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorTextPrimary"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/ivPhotoDetail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"/>
+
+            <ImageButton
+                android:id="@+id/btnCloseDetail"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="8dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:background="@android:color/transparent"
+                android:tint="@color/white"
+                android:contentDescription="닫기"/>
+
+            <ImageButton
+                android:id="@+id/btnDeletePhoto"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="16dp"
+                android:src="@android:drawable/ic_menu_delete"
+                android:background="@android:color/transparent"
+                android:tint="@color/white"
+                android:contentDescription="삭제"/>
+        </RelativeLayout>
+
+    </FrameLayout>
+
+    <!-- 사진 추가 버튼 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/white"
+        android:padding="8dp">
+
+        <ImageButton
+            android:id="@+id/btnAddPhoto"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@android:drawable/ic_input_add"
+            android:background="@color/colorPrimary"
+            android:tint="@color/white"
+            android:contentDescription="사진 추가"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="사진 추가"
+            android:layout_toStartOf="@id/btnAddPhoto"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="14sp"/>
+    </RelativeLayout>
+
+</LinearLayout>

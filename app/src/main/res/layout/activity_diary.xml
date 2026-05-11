@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorBackground">
+
+    <!-- 공개/비공개 설정 (CompoundButton - RadioButton) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="공개 설정"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="14sp"/>
+
+        <RadioGroup
+            android:id="@+id/radioGroupVisibility"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioPublic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="공개"
+                android:textSize="13sp"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/radioPrivate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="비공개"
+                android:textSize="13sp"
+                android:layout_marginStart="8dp"/>
+        </RadioGroup>
+    </LinearLayout>
+
+    <!-- 일기 카드 목록: GridLayout -->
+    <GridLayout
+        android:id="@+id/gridDiaryCards"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:padding="8dp"/>
+
+    <!-- 일기 작성 에디터: ScrollView (뷰 컨테이너) -->
+    <ScrollView
+        android:id="@+id/scrollDiaryEditor"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/etDiaryTitle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="일기 제목"
+                android:background="@drawable/input_background"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:inputType="text"/>
+
+            <EditText
+                android:id="@+id/etDiaryDate"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:hint="날짜 (예: 2024-01-01)"
+                android:background="@drawable/input_background"
+                android:padding="8dp"
+                android:textSize="14sp"
+                android:inputType="date"/>
+
+            <EditText
+                android:id="@+id/etDiaryContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="200dp"
+                android:layout_marginTop="8dp"
+                android:hint="여행의 추억을 기록하세요..."
+                android:background="@drawable/input_background"
+                android:padding="8dp"
+                android:textSize="14sp"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:lines="8"/>
+
+            <!-- 저장/공유 버튼 행 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:gravity="end">
+
+                <Button
+                    android:id="@+id/btnShareDiary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="공유"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@android:color/transparent"
+                    android:paddingHorizontal="16dp"/>
+
+                <Button
+                    android:id="@+id/btnSaveDiary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="저장"
+                    android:textColor="@color/white"
+                    android:background="@color/colorPrimary"
+                    android:paddingHorizontal="24dp"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 새 일기 작성 버튼 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/white"
+        android:padding="8dp">
+
+        <ImageButton
+            android:id="@+id/btnNewDiary"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@android:drawable/ic_input_add"
+            android:background="@color/colorPrimary"
+            android:tint="@color/white"
+            android:contentDescription="새 일기 작성"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="새 일기 작성"
+            android:layout_toStartOf="@id/btnNewDiary"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="14sp"/>
+    </RelativeLayout>
+
+</LinearLayout>

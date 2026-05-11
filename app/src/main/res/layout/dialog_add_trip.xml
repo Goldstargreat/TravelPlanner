@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/etTripName"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="여행 이름 (필수)"
+        android:inputType="text"
+        android:background="@drawable/input_background"
+        android:padding="8dp"/>
+
+    <EditText
+        android:id="@+id/etTripDestination"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:hint="목적지 (예: 일본 도쿄)"
+        android:inputType="text"
+        android:background="@drawable/input_background"
+        android:padding="8dp"/>
+
+    <EditText
+        android:id="@+id/etStartDate"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:hint="출발일 (예: 2024-05-01)"
+        android:inputType="date"
+        android:background="@drawable/input_background"
+        android:padding="8dp"/>
+
+    <EditText
+        android:id="@+id/etEndDate"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:hint="귀국일 (예: 2024-05-07)"
+        android:inputType="date"
+        android:background="@drawable/input_background"
+        android:padding="8dp"/>
+
+</LinearLayout>
