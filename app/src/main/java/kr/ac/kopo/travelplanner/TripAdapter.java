@@ -25,15 +25,16 @@ public class TripAdapter extends ArrayAdapter<Trip> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+
         if (convertView == null) {
             convertView = LayoutInflater.from(context)
                     .inflate(R.layout.list_item_trip, parent, false);
             holder = new ViewHolder();
-            holder.ivThumb = convertView.findViewById(R.id.ivTripThumb);
-            holder.tvName = convertView.findViewById(R.id.tvTripName);
-            holder.tvDestination = convertView.findViewById(R.id.tvTripDestination);
-            holder.tvDate = convertView.findViewById(R.id.tvTripDate);
-            holder.tvCount = convertView.findViewById(R.id.tvScheduleCount);
+            holder.ivThumb       = (ImageView) convertView.findViewById(R.id.ivTripThumb);
+            holder.tvName        = (TextView)  convertView.findViewById(R.id.tvTripName);
+            holder.tvDestination = (TextView)  convertView.findViewById(R.id.tvTripDestination);
+            holder.tvDate        = (TextView)  convertView.findViewById(R.id.tvTripDate);
+            holder.tvCount       = (TextView)  convertView.findViewById(R.id.tvScheduleCount);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -45,8 +46,7 @@ public class TripAdapter extends ArrayAdapter<Trip> {
         holder.tvDate.setText(trip.getDateRange());
         holder.tvCount.setText(trip.getScheduleCount() + "개 일정");
 
-        // 대표 이미지 로드 (설정된 경우)
-        if (trip.getCoverImagePath() != null && !trip.getCoverImagePath().isEmpty()) {
+        if (trip.getCoverImagePath() != null && !trip.getCoverImagePath().equals("")) {
             File imgFile = new File(trip.getCoverImagePath());
             if (imgFile.exists()) {
                 holder.ivThumb.setImageBitmap(
@@ -63,6 +63,9 @@ public class TripAdapter extends ArrayAdapter<Trip> {
 
     static class ViewHolder {
         ImageView ivThumb;
-        TextView tvName, tvDestination, tvDate, tvCount;
+        TextView tvName;
+        TextView tvDestination;
+        TextView tvDate;
+        TextView tvCount;
     }
 }
