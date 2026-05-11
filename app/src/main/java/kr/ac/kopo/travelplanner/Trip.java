@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Trip implements Serializable {
+public class Trip implements Serializable
+{
     private int id;
     private String name;
     private String destination;

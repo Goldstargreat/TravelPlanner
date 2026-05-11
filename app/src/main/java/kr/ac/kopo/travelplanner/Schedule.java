@@ -39,13 +39,11 @@ public class Schedule implements Serializable {
     public void setCategory(String category) { this.category = category; }
 
     public int getCategoryColor() {
-        switch (category) {
-            case "숙소": return 0xFF4CAF50;
-            case "식당": return 0xFFFF5722;
-            case "관광지": return 0xFF2196F3;
-            case "교통": return 0xFF9C27B0;
-            case "쇼핑": return 0xFFE91E63;
-            default: return 0xFF607D8B;
-        }
+        if (category.equals("숙소"))   return 0xFF4CAF50;
+        if (category.equals("식당"))   return 0xFFFF5722;
+        if (category.equals("관광지")) return 0xFF2196F3;
+        if (category.equals("교통"))   return 0xFF9C27B0;
+        if (category.equals("쇼핑"))   return 0xFFE91E63;
+        return 0xFF607D8B;
     }
 }
