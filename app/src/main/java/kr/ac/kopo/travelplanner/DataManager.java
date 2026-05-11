@@ -3,6 +3,7 @@ package kr.ac.kopo.travelplanner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 public class DataManager {
@@ -11,7 +12,7 @@ public class DataManager {
     private int nextTripId = 1;
 
     private DataManager() {
-        trips = new ArrayList<>();
+        trips = new ArrayList<Trip>();
         loadSampleData();
     }
 
@@ -22,7 +23,6 @@ public class DataManager {
         return instance;
     }
 
-    // 샘플 데이터 초기 로드
     private void loadSampleData() {
         Trip trip1 = new Trip(nextTripId++, "도쿄 벚꽃 여행", "일본 도쿄",
                 "2024-03-25", "2024-03-30");
@@ -51,8 +51,10 @@ public class DataManager {
     public List<Trip> getTrips() { return trips; }
 
     public Trip getTripById(int id) {
-        for (Trip t : trips) {
-            if (t.getId() == id) return t;
+        for (int i = 0; i < trips.size(); i++) {
+            if (trips.get(i).getId() == id) {
+                return trips.get(i);
+            }
         }
         return null;
     }
@@ -62,20 +64,42 @@ public class DataManager {
     }
 
     public void removeTrip(int id) {
-        trips.removeIf(t -> t.getId() == id);
+        Iterator<Trip> iterator = trips.iterator();
+        while (iterator.hasNext()) {
+            Trip t = iterator.next();
+            if (t.getId() == id) {
+                iterator.remove();
+                break;
+            }
+        }
     }
 
     public List<Trip> getSortedTrips(int sortType) {
-        List<Trip> sorted = new ArrayList<>(trips);
+        List<Trip> sorted = new ArrayList<Trip>(trips);
         switch (sortType) {
-            case 0: // 최신순 (id 내림차순)
-                Collections.sort(sorted, (a, b) -> b.getId() - a.getId());
+            case 0:
+                Collections.sort(sorted, new Comparator<Trip>() {
+                    @Override
+                    public int compare(Trip a, Trip b) {
+                        return b.getId() - a.getId();
+                    }
+                });
                 break;
-            case 1: // 이름순
-                Collections.sort(sorted, Comparator.comparing(Trip::getName));
+            case 1:
+                Collections.sort(sorted, new Comparator<Trip>() {
+                    @Override
+                    public int compare(Trip a, Trip b) {
+                        return a.getName().compareTo(b.getName());
+                    }
+                });
                 break;
-            case 2: // 날짜순
-                Collections.sort(sorted, Comparator.comparing(Trip::getStartDate));
+            case 2:
+                Collections.sort(sorted, new Comparator<Trip>() {
+                    @Override
+                    public int compare(Trip a, Trip b) {
+                        return a.getStartDate().compareTo(b.getStartDate());
+                    }
+                });
                 break;
         }
         return sorted;
