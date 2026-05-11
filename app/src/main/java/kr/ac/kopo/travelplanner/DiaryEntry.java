@@ -26,7 +26,9 @@ public class DiaryEntry implements Serializable {
     public void setPublic(boolean isPublic) { this.isPublic = isPublic; }
 
     public String getPreview() {
-        if (content.length() > 50) return content.substring(0, 50) + "...";
+        if (content.length() > 50) {
+            return content.substring(0, 50) + "...";
+        }
         return content;
     }
 }
