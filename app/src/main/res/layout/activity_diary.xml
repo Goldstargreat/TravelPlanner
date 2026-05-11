@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -21,7 +22,7 @@
             android:text="공개 설정"
             android:textStyle="bold"
             android:textColor="@color/colorTextPrimary"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
 
         <RadioGroup
             android:id="@+id/radioGroupVisibility"
@@ -35,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:text="공개"
                 android:textSize="13sp"
-                android:checked="true"/>
+                android:checked="true" />
 
             <RadioButton
                 android:id="@+id/radioPrivate"
@@ -43,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:text="비공개"
                 android:textSize="13sp"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp" />
         </RadioGroup>
     </LinearLayout>
 
@@ -53,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:columnCount="2"
-        android:padding="8dp"/>
+        android:padding="8dp" />
 
     <!-- 일기 작성 에디터: ScrollView (뷰 컨테이너) -->
     <ScrollView
@@ -78,7 +79,7 @@
                 android:padding="8dp"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:inputType="text"/>
+                android:inputType="text" />
 
             <EditText
                 android:id="@+id/etDiaryDate"
@@ -89,7 +90,7 @@
                 android:background="@drawable/input_background"
                 android:padding="8dp"
                 android:textSize="14sp"
-                android:inputType="date"/>
+                android:inputType="date" />
 
             <EditText
                 android:id="@+id/etDiaryContent"
@@ -103,7 +104,7 @@
                 android:textSize="14sp"
                 android:inputType="textMultiLine"
                 android:gravity="top"
-                android:lines="8"/>
+                android:lines="8" />
 
             <!-- 저장/공유 버튼 행 -->
             <LinearLayout
@@ -120,7 +121,7 @@
                     android:text="공유"
                     android:textColor="@color/colorPrimary"
                     android:background="@android:color/transparent"
-                    android:paddingHorizontal="16dp"/>
+                    android:paddingHorizontal="16dp" />
 
                 <Button
                     android:id="@+id/btnSaveDiary"
@@ -130,7 +131,7 @@
                     android:textColor="@color/white"
                     android:background="@color/colorPrimary"
                     android:paddingHorizontal="24dp"
-                    android:layout_marginStart="8dp"/>
+                    android:layout_marginStart="8dp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -150,8 +151,8 @@
             android:layout_centerVertical="true"
             android:src="@android:drawable/ic_input_add"
             android:background="@color/colorPrimary"
-            android:tint="@color/white"
-            android:contentDescription="새 일기 작성"/>
+            android:contentDescription="새 일기 작성"
+            app:tint="@color/white" />
 
         <TextView
             android:layout_width="wrap_content"
