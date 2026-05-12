@@ -1,12 +1,14 @@
 package kr.ac.kopo.travelplanner;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -33,7 +35,9 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private ImageView ivPhotoDetail;
     private RelativeLayout layoutPhotoDetail;
     private TextView tvNoPhotos;
-    private ImageButton btnAddPhoto, btnCloseDetail, btnDeletePhoto;
+    private ImageButton btnAddPhoto;
+    private ImageButton btnCloseDetail;
+    private ImageButton btnDeletePhoto;
 
     private Trip trip;
     private DataManager dm;
@@ -43,57 +47,86 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_gallery);
-        setTitle("사진첩");
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("사진첩");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         dm = DataManager.getInstance();
         int tripId = getIntent().getIntExtra("trip_id", -1);
         trip = dm.getTripById(tripId);
 
-        galleryPhotos     = findViewById(R.id.galleryPhotos);
-        gridViewPhotos    = findViewById(R.id.gridViewPhotos);
-        ivPhotoDetail     = findViewById(R.id.ivPhotoDetail);
-        layoutPhotoDetail = findViewById(R.id.layoutPhotoDetail);
-        tvNoPhotos        = findViewById(R.id.tvNoPhotos);
-        btnAddPhoto       = findViewById(R.id.btnAddPhoto);
-        btnCloseDetail    = findViewById(R.id.btnCloseDetail);
-        btnDeletePhoto    = findViewById(R.id.btnDeletePhoto);
+        galleryPhotos     = (Gallery)        findViewById(R.id.galleryPhotos);
+        gridViewPhotos    = (GridView)       findViewById(R.id.gridViewPhotos);
+        ivPhotoDetail     = (ImageView)      findViewById(R.id.ivPhotoDetail);
+        layoutPhotoDetail = (RelativeLayout) findViewById(R.id.layoutPhotoDetail);
+        tvNoPhotos        = (TextView)       findViewById(R.id.tvNoPhotos);
+        btnAddPhoto       = (ImageButton)    findViewById(R.id.btnAddPhoto);
+        btnCloseDetail    = (ImageButton)    findViewById(R.id.btnCloseDetail);
+        btnDeletePhoto    = (ImageButton)    findViewById(R.id.btnDeletePhoto);
 
         refreshGallery();
 
-        // Gallery 슬라이더 선택 → GridView 스크롤 연동
         galleryPhotos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 gridViewPhotos.smoothScrollToPosition(position);
             }
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-        // GridView 클릭 → FrameLayout 오버레이로 상세 보기
-        gridViewPhotos.setOnItemClickListener((parent, view, position, id) -> {
-            selectedPhotoIndex = position;
-            showPhotoDetail(position);
+        gridViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedPhotoIndex = position;
+                showPhotoDetail(position);
+            }
         });
 
-        // GridView 롱클릭 → 삭제 확인
-        gridViewPhotos.setOnItemLongClickListener((parent, view, position, id) -> {
-            confirmDeletePhoto(position);
+        gridViewPhotos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                           int position, long id) {
+                confirmDeletePhoto(position);
+                return true;
+            }
+        });
+
+        btnAddPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_PICK_PHOTO);
+            }
+        });
+
+        btnCloseDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layoutPhotoDetail.setVisibility(View.GONE);
+            }
+        });
+
+        btnDeletePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (selectedPhotoIndex >= 0) {
+                    confirmDeletePhoto(selectedPhotoIndex);
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
             return true;
-        });
-
-        // 사진 추가 버튼 → Intent ACTION_PICK으로 기기 갤러리 접근
-        btnAddPhoto.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, REQUEST_PICK_PHOTO);
-        });
-
-        btnCloseDetail.setOnClickListener(v -> layoutPhotoDetail.setVisibility(View.GONE));
-
-        btnDeletePhoto.setOnClickListener(v -> {
-            if (selectedPhotoIndex >= 0) confirmDeletePhoto(selectedPhotoIndex);
-        });
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -120,27 +153,29 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
     private void showPhotoDetail(int position) {
         String path = trip.getPhotoPaths().get(position);
-        try {
-            Bitmap bm = getBitmapFromPath(path);
-            if (bm != null) {
-                ivPhotoDetail.setImageBitmap(bm);
-                layoutPhotoDetail.setVisibility(View.VISIBLE);
-            }
-        } catch (Exception e) {
+        Bitmap bm = getBitmapFromPath(path);
+        if (bm != null) {
+            ivPhotoDetail.setImageBitmap(bm);
+            layoutPhotoDetail.setVisibility(View.VISIBLE);
+        } else {
             Toast.makeText(this, "이미지를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void confirmDeletePhoto(int index) {
+    private void confirmDeletePhoto(final int index) {
         new AlertDialog.Builder(this)
                 .setTitle("사진 삭제")
                 .setMessage("이 사진을 삭제하시겠습니까?")
-                .setPositiveButton("삭제", (dialog, which) -> {
-                    trip.removePhoto(index);
-                    layoutPhotoDetail.setVisibility(View.GONE);
-                    selectedPhotoIndex = -1;
-                    refreshGallery();
-                    Toast.makeText(this, getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+                .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        trip.removePhoto(index);
+                        layoutPhotoDetail.setVisibility(View.GONE);
+                        selectedPhotoIndex = -1;
+                        refreshGallery();
+                        Toast.makeText(PhotoGalleryActivity.this,
+                                getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .setNegativeButton("취소", null)
                 .show();
@@ -149,7 +184,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private Bitmap getBitmapFromPath(String path) {
         try {
             if (path.startsWith("content://")) {
-                return MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(path));
+                return MediaStore.Images.Media.getBitmap(
+                        getContentResolver(), Uri.parse(path));
             } else {
                 return BitmapFactory.decodeFile(path);
             }
@@ -158,18 +194,20 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         }
     }
 
-    // ── GridView 어댑터 (내부 클래스) ──────────────────────────────
     private class PhotoGridAdapter extends BaseAdapter {
-        @Override public int getCount()             { return trip.getPhotoPaths().size(); }
-        @Override public Object getItem(int pos)    { return trip.getPhotoPaths().get(pos); }
-        @Override public long getItemId(int pos)    { return pos; }
+        @Override
+        public int getCount() { return trip.getPhotoPaths().size(); }
+        @Override
+        public Object getItem(int position) { return trip.getPhotoPaths().get(position); }
+        @Override
+        public long getItemId(int position) { return position; }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView iv;
             if (convertView == null) {
                 iv = new ImageView(PhotoGalleryActivity.this);
-                int size = (int)(getResources().getDisplayMetrics().widthPixels / 3f);
+                int size = (int) (getResources().getDisplayMetrics().widthPixels / 3f);
                 iv.setLayoutParams(new GridView.LayoutParams(size, size));
                 iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 iv.setPadding(2, 2, 2, 2);
@@ -177,17 +215,22 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                 iv = (ImageView) convertView;
             }
             Bitmap bm = getBitmapFromPath(trip.getPhotoPaths().get(position));
-            iv.setImageResource(bm != null ? 0 : android.R.drawable.ic_menu_gallery);
-            if (bm != null) iv.setImageBitmap(bm);
+            if (bm != null) {
+                iv.setImageBitmap(bm);
+            } else {
+                iv.setImageResource(android.R.drawable.ic_menu_gallery);
+            }
             return iv;
         }
     }
 
-    // ── Gallery 슬라이더 어댑터 (내부 클래스) ───────────────────────
     private class GalleryPhotoAdapter extends BaseAdapter {
-        @Override public int getCount()             { return trip.getPhotoPaths().size(); }
-        @Override public Object getItem(int pos)    { return trip.getPhotoPaths().get(pos); }
-        @Override public long getItemId(int pos)    { return pos; }
+        @Override
+        public int getCount() { return trip.getPhotoPaths().size(); }
+        @Override
+        public Object getItem(int position) { return trip.getPhotoPaths().get(position); }
+        @Override
+        public long getItemId(int position) { return position; }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -196,8 +239,11 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
             iv.setPadding(4, 4, 4, 4);
             Bitmap bm = getBitmapFromPath(trip.getPhotoPaths().get(position));
-            if (bm != null) iv.setImageBitmap(bm);
-            else iv.setImageResource(android.R.drawable.ic_menu_gallery);
+            if (bm != null) {
+                iv.setImageBitmap(bm);
+            } else {
+                iv.setImageResource(android.R.drawable.ic_menu_gallery);
+            }
             return iv;
         }
     }
