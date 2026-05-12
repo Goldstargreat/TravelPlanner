@@ -1,13 +1,14 @@
 package kr.ac.kopo.travelplanner;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TableLayout;
@@ -27,7 +28,9 @@ public class TripDetailActivity extends AppCompatActivity {
     private DataManager dm;
     private TableLayout tableSchedules;
     private TextView tvEmpty;
-    private TextView tvDetailTripName, tvDetailDestination, tvDetailDate;
+    private TextView tvDetailTripName;
+    private TextView tvDetailDestination;
+    private TextView tvDetailDate;
     private ImageView ivTripCover;
 
     @Override
@@ -45,44 +48,62 @@ public class TripDetailActivity extends AppCompatActivity {
             return;
         }
 
-        setTitle(trip.getName());
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(trip.getName());
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
-        tvDetailTripName = findViewById(R.id.tvDetailTripName);
-        tvDetailDestination = findViewById(R.id.tvDetailDestination);
-        tvDetailDate = findViewById(R.id.tvDetailDate);
-        ivTripCover = findViewById(R.id.ivTripCover);
-        tableSchedules = findViewById(R.id.tableSchedules);
-        tvEmpty = findViewById(R.id.tvEmptySchedules);
+        tvDetailTripName    = (TextView)    findViewById(R.id.tvDetailTripName);
+        tvDetailDestination = (TextView)    findViewById(R.id.tvDetailDestination);
+        tvDetailDate        = (TextView)    findViewById(R.id.tvDetailDate);
+        ivTripCover         = (ImageView)   findViewById(R.id.ivTripCover);
+        tableSchedules      = (TableLayout) findViewById(R.id.tableSchedules);
+        tvEmpty             = (TextView)    findViewById(R.id.tvEmptySchedules);
 
         tvDetailTripName.setText(trip.getName());
         tvDetailDestination.setText(trip.getDestination());
         tvDetailDate.setText(trip.getDateRange());
 
-        // 일정 추가 버튼 → AddScheduleActivity (startActivityForResult)
-        ImageButton btnAdd = findViewById(R.id.btnAddSchedule);
-        btnAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(this, AddScheduleActivity.class);
-            intent.putExtra("trip_id", trip.getId());
-            startActivityForResult(intent, REQUEST_ADD_SCHEDULE);
+        ImageButton btnAdd = (ImageButton) findViewById(R.id.btnAddSchedule);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TripDetailActivity.this, AddScheduleActivity.class);
+                intent.putExtra("trip_id", trip.getId());
+                startActivityForResult(intent, REQUEST_ADD_SCHEDULE);
+            }
         });
 
-        // 사진첩 이동 버튼
-        ImageButton btnGallery = findViewById(R.id.btnGoGallery);
-        btnGallery.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PhotoGalleryActivity.class);
-            intent.putExtra("trip_id", trip.getId());
-            startActivity(intent);
+        ImageButton btnGallery = (ImageButton) findViewById(R.id.btnGoGallery);
+        btnGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TripDetailActivity.this, PhotoGalleryActivity.class);
+                intent.putExtra("trip_id", trip.getId());
+                startActivity(intent);
+            }
         });
 
-        // 일기 이동 버튼
-        ImageButton btnDiary = findViewById(R.id.btnGoDiary);
-        btnDiary.setOnClickListener(v -> {
-            Intent intent = new Intent(this, DiaryActivity.class);
-            intent.putExtra("trip_id", trip.getId());
-            startActivity(intent);
+        ImageButton btnDiary = (ImageButton) findViewById(R.id.btnGoDiary);
+        btnDiary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TripDetailActivity.this, DiaryActivity.class);
+                intent.putExtra("trip_id", trip.getId());
+                startActivity(intent);
+            }
         });
 
         refreshTable();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -101,14 +122,12 @@ public class TripDetailActivity extends AppCompatActivity {
     }
 
     private void refreshTable() {
-        // 헤더 행(index 0) 제외하고 전부 제거
         int childCount = tableSchedules.getChildCount();
         if (childCount > 1) {
             tableSchedules.removeViews(1, childCount - 1);
         }
 
         List<Schedule> schedules = trip.getSchedules();
-
         if (schedules.isEmpty()) {
             tvEmpty.setVisibility(View.VISIBLE);
             return;
@@ -116,28 +135,21 @@ public class TripDetailActivity extends AppCompatActivity {
         tvEmpty.setVisibility(View.GONE);
 
         for (int i = 0; i < schedules.size(); i++) {
-            final int index = i;
-            Schedule s = schedules.get(i);
-            addScheduleRow(s, index);
+            addScheduleRow(schedules.get(i), i);
         }
     }
 
-    private void addScheduleRow(Schedule s, int index) {
+    private void addScheduleRow(final Schedule s, final int index) {
         TableRow row = new TableRow(this);
         row.setPadding(4, 4, 4, 4);
-
-        // 짝수/홀수 행 배경 교번
         row.setBackgroundColor(index % 2 == 0 ? Color.WHITE : 0xFFF5F5F5);
 
-        // 날짜 셀
         TextView tvDate = makeCell(s.getDate(), 60);
         tvDate.setTextSize(11);
 
-        // 시간 셀
         TextView tvTime = makeCell(s.getTime(), 50);
         tvTime.setTextSize(11);
 
-        // 장소명 + 주소 셀 (layout_weight=1로 남은 공간 차지)
         TextView tvPlace = new TextView(this);
         tvPlace.setText(s.getPlaceName() + "\n" + s.getAddress());
         tvPlace.setTextSize(12);
@@ -147,30 +159,41 @@ public class TripDetailActivity extends AppCompatActivity {
                 0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
         tvPlace.setLayoutParams(placeParams);
 
-        // 완료 체크박스 (CompoundButton)
         CheckBox cbDone = new CheckBox(this);
         cbDone.setChecked(s.isCompleted());
         cbDone.setPadding(6, 6, 6, 6);
-        cbDone.setOnCheckedChangeListener((btn, isChecked) -> s.setCompleted(isChecked));
+        cbDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                s.setCompleted(isChecked);
+            }
+        });
 
         row.addView(tvDate);
         row.addView(tvTime);
         row.addView(tvPlace);
         row.addView(cbDone);
 
-        // 롱클릭 → 일정 삭제 AlertDialog
-        row.setOnLongClickListener(v -> {
-            new AlertDialog.Builder(this)
-                    .setTitle("일정 삭제")
-                    .setMessage("'" + s.getPlaceName() + "' 일정을 삭제하시겠습니까?")
-                    .setPositiveButton("삭제", (dialog, which) -> {
-                        trip.removeSchedule(index);
-                        refreshTable();
-                        Toast.makeText(this, getString(R.string.deleted), Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("취소", null)
-                    .show();
-            return true;
+        row.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new AlertDialog.Builder(TripDetailActivity.this)
+                        .setTitle("일정 삭제")
+                        .setMessage("'" + s.getPlaceName() + "' 일정을 삭제하시겠습니까?")
+                        .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                trip.removeSchedule(index);
+                                refreshTable();
+                                Toast.makeText(TripDetailActivity.this,
+                                        getString(R.string.deleted),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("취소", null)
+                        .show();
+                return true;
+            }
         });
 
         tableSchedules.addView(row);
@@ -183,7 +206,7 @@ public class TripDetailActivity extends AppCompatActivity {
         tv.setTextColor(Color.parseColor("#212121"));
         float density = getResources().getDisplayMetrics().density;
         TableRow.LayoutParams params = new TableRow.LayoutParams(
-                (int)(widthDp * density), TableRow.LayoutParams.WRAP_CONTENT);
+                (int) (widthDp * density), TableRow.LayoutParams.WRAP_CONTENT);
         tv.setLayoutParams(params);
         return tv;
     }
