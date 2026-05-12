@@ -6,20 +6,22 @@
     android:orientation="vertical"
     android:background="@color/colorBackground">
 
-    <!-- 공개/비공개 설정 (CompoundButton - RadioButton) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/white"
-        android:padding="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:gravity="center_vertical">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="공개 설정"
+            android:text="새 일기 공개 설정"
             android:textStyle="bold"
             android:textColor="@color/colorTextPrimary"
             android:textSize="14sp" />
@@ -48,7 +50,11 @@
         </RadioGroup>
     </LinearLayout>
 
-    <!-- 일기 카드 목록: GridLayout -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorDivider" />
+
     <GridLayout
         android:id="@+id/gridDiaryCards"
         android:layout_width="match_parent"
@@ -56,7 +62,6 @@
         android:columnCount="2"
         android:padding="8dp" />
 
-    <!-- 일기 작성 에디터: ScrollView (뷰 컨테이너) -->
     <ScrollView
         android:id="@+id/scrollDiaryEditor"
         android:layout_width="match_parent"
@@ -106,7 +111,6 @@
                 android:gravity="top"
                 android:lines="8" />
 
-            <!-- 저장/공유 버튼 행 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -136,33 +140,32 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 새 일기 작성 버튼 -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="52dp"
         android:background="@color/white"
-        android:padding="8dp">
-
-        <ImageButton
-            android:id="@+id/btnNewDiary"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@android:drawable/ic_input_add"
-            android:background="@color/colorPrimary"
-            android:contentDescription="새 일기 작성"
-            app:tint="@color/white" />
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="새 일기 작성"
-            android:layout_toStartOf="@id/btnNewDiary"
-            android:layout_marginEnd="8dp"
             android:textColor="@color/colorTextSecondary"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
+
+        <ImageButton
+            android:id="@+id/btnNewDiary"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:src="@android:drawable/ic_input_add"
+            android:background="@color/colorPrimary"
+            android:contentDescription="새 일기 작성"
+            app:tint="@color/white" />
     </RelativeLayout>
 
 </LinearLayout>

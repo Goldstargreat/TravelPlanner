@@ -4,15 +4,16 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground">
 
-    <!-- 상단 정렬 Spinner -->
     <LinearLayout
-        android:id="@+id/layoutTopBar"
+        android:id="@+id/layoutSortBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
         android:orientation="horizontal"
-        android:padding="8dp"
         android:background="@color/colorPrimary"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp">
 
         <TextView
             android:layout_width="0dp"
@@ -20,19 +21,18 @@
             android:layout_weight="1"
             android:text="내 여행 목록"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textStyle="bold"/>
 
         <Spinner
             android:id="@+id/spinnerSort"
-            android:layout_width="130dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:entries="@array/sort_options"
             android:background="@android:color/transparent"
             android:popupBackground="@color/white"/>
     </LinearLayout>
 
-    <!-- 빈 목록 안내 텍스트 -->
     <TextView
         android:id="@+id/tvEmptyTrips"
         android:layout_width="wrap_content"
@@ -44,25 +44,23 @@
         android:gravity="center"
         android:visibility="gone"/>
 
-    <!-- 여행 목록 ListView -->
     <ListView
         android:id="@+id/listViewTrips"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/layoutTopBar"
-        android:layout_above="@+id/bottomSpace"
+        android:layout_below="@id/layoutSortBar"
+        android:layout_above="@+id/viewBottomPad"
         android:divider="@color/colorDivider"
         android:dividerHeight="1dp"
-        android:padding="8dp"
+        android:padding="4dp"
         android:clipToPadding="false"/>
 
     <View
-        android:id="@+id/bottomSpace"
+        android:id="@+id/viewBottomPad"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_alignParentBottom="true"/>
 
-    <!-- FAB 스타일 추가 버튼 -->
     <ImageButton
         android:id="@+id/btnAddTrip"
         android:layout_width="56dp"

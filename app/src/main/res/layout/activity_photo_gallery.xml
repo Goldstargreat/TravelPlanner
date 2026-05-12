@@ -5,22 +5,19 @@
     android:orientation="vertical"
     android:background="@color/colorBackground">
 
-    <!-- Gallery 위젯: 상단 가로 슬라이더 -->
     <Gallery
         android:id="@+id/galleryPhotos"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="160dp"
         android:background="@color/colorTextPrimary"
         android:spacing="4dp"/>
 
-    <!-- 선택된 사진 상세 보기 (FrameLayout 오버레이 전환) -->
     <FrameLayout
         android:id="@+id/framePhotoContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- GridView: 전체 사진 썸네일 -->
         <GridView
             android:id="@+id/gridViewPhotos"
             android:layout_width="match_parent"
@@ -31,7 +28,6 @@
             android:stretchMode="columnWidth"
             android:padding="2dp"/>
 
-        <!-- 사진 없을 때 안내 -->
         <TextView
             android:id="@+id/tvNoPhotos"
             android:layout_width="wrap_content"
@@ -42,7 +38,6 @@
             android:textSize="16sp"
             android:visibility="gone"/>
 
-        <!-- 사진 크게 보기 오버레이 -->
         <RelativeLayout
             android:id="@+id/layoutPhotoDetail"
             android:layout_width="match_parent"
@@ -83,33 +78,32 @@
 
     </FrameLayout>
 
-    <!-- 사진 추가 버튼 -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="52dp"
         android:background="@color/white"
-        android:padding="8dp">
-
-        <ImageButton
-            android:id="@+id/btnAddPhoto"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@android:drawable/ic_input_add"
-            android:background="@color/colorPrimary"
-            android:tint="@color/white"
-            android:contentDescription="사진 추가"/>
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="사진 추가"
-            android:layout_toStartOf="@id/btnAddPhoto"
-            android:layout_marginEnd="8dp"
             android:textColor="@color/colorTextSecondary"
             android:textSize="14sp"/>
+
+        <ImageButton
+            android:id="@+id/btnAddPhoto"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:src="@android:drawable/ic_input_add"
+            android:background="@color/colorPrimary"
+            android:tint="@color/white"
+            android:contentDescription="사진 추가"/>
     </RelativeLayout>
 
 </LinearLayout>
