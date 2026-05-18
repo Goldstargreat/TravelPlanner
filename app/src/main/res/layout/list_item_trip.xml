@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:background="@color/colorCardBg"
     android:padding="12dp"
-    android:layout_marginBottom="4dp">
+    android:layout_marginBottom="4dp"
+    android:descendantFocusability="blocksDescendants">
 
     <ImageView
         android:id="@+id/ivTripThumb"
@@ -84,6 +85,7 @@
             android:layout_height="32dp"
             android:src="@android:drawable/ic_menu_gallery"
             android:background="@android:color/transparent"
+            android:focusable="false"
             app:tint="@color/colorPrimary"
             android:contentDescription="사진첩" />
 
@@ -93,6 +95,7 @@
             android:layout_height="32dp"
             android:src="@android:drawable/ic_menu_edit"
             android:background="@android:color/transparent"
+            android:focusable="false"
             app:tint="@color/colorPrimary"
             android:layout_marginStart="4dp"
             android:contentDescription="여행 일기" />
