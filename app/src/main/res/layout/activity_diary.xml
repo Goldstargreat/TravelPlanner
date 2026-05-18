@@ -58,7 +58,6 @@
 
     </LinearLayout>
 
-    <!-- 에디터 오버레이: 새 일기 작성 시 전체 덮음 -->
     <ScrollView
         android:id="@+id/scrollDiaryEditor"
         android:layout_width="match_parent"
@@ -170,7 +169,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 사용하지 않지만 Java 코드 참조 오류 방지용 더미 뷰 -->
     <ImageButton
         android:id="@+id/btnNewDiary"
         android:layout_width="0dp"

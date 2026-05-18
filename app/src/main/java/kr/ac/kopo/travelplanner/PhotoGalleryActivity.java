@@ -1,19 +1,20 @@
 package kr.ac.kopo.travelplanner;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Gallery;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,16 +22,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.util.List;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
 
-    private static final int REQUEST_PICK_PHOTO = 200;
+    private static final int REQUEST_PICK_PHOTO       = 200;
+    private static final int REQUEST_PERMISSION_READ  = 300;
 
-    private Gallery galleryPhotos;
     private GridView gridViewPhotos;
     private ImageView ivPhotoDetail;
     private RelativeLayout layoutPhotoDetail;
@@ -49,15 +53,21 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_photo_gallery);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("사진첩");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().hide();
         }
 
         dm = DataManager.getInstance();
         int tripId = getIntent().getIntExtra("trip_id", -1);
         trip = dm.getTripById(tripId);
 
-        galleryPhotos     = (Gallery)        findViewById(R.id.galleryPhotos);
+        ImageButton btnBack = (ImageButton) findViewById(R.id.btnBackGallery);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         gridViewPhotos    = (GridView)       findViewById(R.id.gridViewPhotos);
         ivPhotoDetail     = (ImageView)      findViewById(R.id.ivPhotoDetail);
         layoutPhotoDetail = (RelativeLayout) findViewById(R.id.layoutPhotoDetail);
@@ -67,15 +77,6 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         btnDeletePhoto    = (ImageButton)    findViewById(R.id.btnDeletePhoto);
 
         refreshGallery();
-
-        galleryPhotos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                gridViewPhotos.smoothScrollToPosition(position);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
-        });
 
         gridViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -97,9 +98,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, REQUEST_PICK_PHOTO);
+                checkPermissionAndPickPhoto();
             }
         });
 
@@ -120,13 +119,56 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
+    // 권한 확인 후 갤러리 열기
+    private void checkPermissionAndPickPhoto() {
+        String permission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13 이상
+            permission = Manifest.permission.READ_MEDIA_IMAGES;
+        } else {
+            // Android 12 이하
+            permission = Manifest.permission.READ_EXTERNAL_STORAGE;
         }
-        return super.onOptionsItemSelected(item);
+
+        if (ContextCompat.checkSelfPermission(this, permission)
+                == PackageManager.PERMISSION_GRANTED) {
+            openPhotoPicker();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{permission}, REQUEST_PERMISSION_READ);
+        }
+    }
+
+    private void openPhotoPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_PICK_PHOTO);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_READ) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openPhotoPicker();
+            } else {
+                Toast.makeText(this,
+                        "사진 접근 권한이 필요합니다. 설정에서 권한을 허용해주세요.",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (layoutPhotoDetail.getVisibility() == View.VISIBLE) {
+            layoutPhotoDetail.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -148,7 +190,6 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         tvNoPhotos.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         gridViewPhotos.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
         gridViewPhotos.setAdapter(new PhotoGridAdapter());
-        galleryPhotos.setAdapter(new GalleryPhotoAdapter());
     }
 
     private void showPhotoDetail(int position) {
@@ -214,30 +255,6 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             } else {
                 iv = (ImageView) convertView;
             }
-            Bitmap bm = getBitmapFromPath(trip.getPhotoPaths().get(position));
-            if (bm != null) {
-                iv.setImageBitmap(bm);
-            } else {
-                iv.setImageResource(android.R.drawable.ic_menu_gallery);
-            }
-            return iv;
-        }
-    }
-
-    private class GalleryPhotoAdapter extends BaseAdapter {
-        @Override
-        public int getCount() { return trip.getPhotoPaths().size(); }
-        @Override
-        public Object getItem(int position) { return trip.getPhotoPaths().get(position); }
-        @Override
-        public long getItemId(int position) { return position; }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView iv = new ImageView(PhotoGalleryActivity.this);
-            iv.setLayoutParams(new Gallery.LayoutParams(180, 160));
-            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            iv.setPadding(4, 4, 4, 4);
             Bitmap bm = getBitmapFromPath(trip.getPhotoPaths().get(position));
             if (bm != null) {
                 iv.setImageBitmap(bm);
