@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -29,7 +31,6 @@ public class DiaryActivity extends AppCompatActivity {
     private EditText etDate;
     private EditText etContent;
     private RadioButton radioPublic;
-    private ImageButton btnNewDiary;
     private boolean isEditorOpen = false;
 
     @Override
@@ -38,41 +39,44 @@ public class DiaryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_diary);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("여행 일기");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().hide();
         }
 
         dm = DataManager.getInstance();
         int tripId = getIntent().getIntExtra("trip_id", -1);
         trip = dm.getTripById(tripId);
 
-        gridDiaryCards    = (GridLayout)  findViewById(R.id.gridDiaryCards);
-        scrollDiaryEditor = (ScrollView)  findViewById(R.id.scrollDiaryEditor);
-        etTitle           = (EditText)    findViewById(R.id.etDiaryTitle);
-        etDate            = (EditText)    findViewById(R.id.etDiaryDate);
-        etContent         = (EditText)    findViewById(R.id.etDiaryContent);
+        gridDiaryCards    = (GridLayout) findViewById(R.id.gridDiaryCards);
+        scrollDiaryEditor = (ScrollView) findViewById(R.id.scrollDiaryEditor);
+        etTitle           = (EditText)   findViewById(R.id.etDiaryTitle);
+        etDate            = (EditText)   findViewById(R.id.etDiaryDate);
+        etContent         = (EditText)   findViewById(R.id.etDiaryContent);
         radioPublic       = (RadioButton) findViewById(R.id.radioPublic);
-        btnNewDiary       = (ImageButton) findViewById(R.id.btnNewDiary);
 
-        Button btnSave  = (Button) findViewById(R.id.btnSaveDiary);
-        Button btnShare = (Button) findViewById(R.id.btnShareDiary);
-
-        refreshDiaryCards();
-
-        btnNewDiary.setOnClickListener(new View.OnClickListener() {
+        ImageButton btnBack = (ImageButton) findViewById(R.id.btnBackDiary);
+        btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isEditorOpen) {
-                    scrollDiaryEditor.setVisibility(View.GONE);
-                    isEditorOpen = false;
-                } else {
-                    clearEditor();
-                    scrollDiaryEditor.setVisibility(View.VISIBLE);
-                    isEditorOpen = true;
-                }
+                finish();
             }
         });
 
+        Button btnSave   = (Button) findViewById(R.id.btnSaveDiary);
+        Button btnShare  = (Button) findViewById(R.id.btnShareDiary);
+        Button btnCancel = (Button) findViewById(R.id.btnCancelDiary);
+
+        refreshDiaryCards();
+
+        // 취소 버튼: 에디터 닫기
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollDiaryEditor.setVisibility(View.GONE);
+                isEditorOpen = false;
+            }
+        });
+
+        // 저장 버튼
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,6 +114,7 @@ public class DiaryActivity extends AppCompatActivity {
             }
         });
 
+        // 공유 버튼
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,23 +138,38 @@ public class DiaryActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            if (isEditorOpen) {
+                // 에디터가 열려 있으면 먼저 닫기
+                scrollDiaryEditor.setVisibility(View.GONE);
+                isEditorOpen = false;
+            } else {
+                finish();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (isEditorOpen) {
+            scrollDiaryEditor.setVisibility(View.GONE);
+            isEditorOpen = false;
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void refreshDiaryCards() {
         gridDiaryCards.removeAllViews();
-        if (trip.getDiaryEntries().isEmpty()) {
-            return;
-        }
 
-        int cols = 2;
         float density = getResources().getDisplayMetrics().density;
+        int cols = 2;
         int cardSize = (int) ((getResources().getDisplayMetrics().widthPixels
-                - (int) (16 * density)) / cols);
+                - (int)(16 * density)) / cols);
+        int cardHeight = (int)(160 * density); // 고정 높이로 카드 균일하게
 
+        // 기존 일기 카드 추가
         for (int i = 0; i < trip.getDiaryEntries().size(); i++) {
             final int index = i;
             final DiaryEntry entry = trip.getDiaryEntries().get(i);
@@ -157,13 +177,19 @@ public class DiaryActivity extends AppCompatActivity {
             LinearLayout card = new LinearLayout(this);
             card.setOrientation(LinearLayout.VERTICAL);
             card.setPadding(
-                    (int)(8*density), (int)(8*density),
-                    (int)(8*density), (int)(8*density));
-            card.setBackgroundColor(Color.WHITE);
+                    (int)(10*density), (int)(10*density),
+                    (int)(10*density), (int)(10*density));
+
+            // 흰색 배경 + 연한 회색 테두리
+            GradientDrawable cardBg = new GradientDrawable();
+            cardBg.setColor(Color.WHITE);
+            cardBg.setStroke((int)(1*density), Color.parseColor("#E0E0E0"));
+            cardBg.setCornerRadius(8 * density);
+            card.setBackground(cardBg);
 
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width  = cardSize - (int)(8*density);
-            params.height = GridLayout.LayoutParams.WRAP_CONTENT;
+            params.height = cardHeight; // 고정 높이
             params.setMargins(
                     (int)(4*density), (int)(4*density),
                     (int)(4*density), (int)(4*density));
@@ -173,17 +199,27 @@ public class DiaryActivity extends AppCompatActivity {
             tvCardTitle.setText(entry.getTitle());
             tvCardTitle.setTextSize(14f);
             tvCardTitle.setTextColor(Color.parseColor("#212121"));
+            tvCardTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+            tvCardTitle.setMaxLines(1);
 
             TextView tvCardDate = new TextView(this);
             tvCardDate.setText(entry.getDate());
             tvCardDate.setTextSize(11f);
             tvCardDate.setTextColor(Color.parseColor("#757575"));
+            LinearLayout.LayoutParams dateParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            dateParams.setMargins(0, (int)(2*density), 0, (int)(4*density));
+            tvCardDate.setLayoutParams(dateParams);
 
             TextView tvPreview = new TextView(this);
             tvPreview.setText(entry.getPreview());
             tvPreview.setTextSize(12f);
             tvPreview.setTextColor(Color.parseColor("#757575"));
             tvPreview.setMaxLines(3);
+            LinearLayout.LayoutParams previewParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
+            tvPreview.setLayoutParams(previewParams);
 
             TextView tvVisibility = new TextView(this);
             tvVisibility.setText(entry.isPublic() ? "공개" : "비공개");
@@ -199,6 +235,7 @@ public class DiaryActivity extends AppCompatActivity {
             card.addView(tvPreview);
             card.addView(tvVisibility);
 
+            // 길게 누르면 삭제
             card.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -223,6 +260,44 @@ public class DiaryActivity extends AppCompatActivity {
 
             gridDiaryCards.addView(card);
         }
+
+        // 마지막 칸에 + 추가 카드 (점선 테두리 스타일)
+        LinearLayout addCard = new LinearLayout(this);
+        addCard.setOrientation(LinearLayout.VERTICAL);
+        addCard.setGravity(Gravity.CENTER);
+
+        // 흰색 배경 + 점선 테두리
+        GradientDrawable addCardBg = new GradientDrawable();
+        addCardBg.setColor(Color.WHITE);
+        addCardBg.setStroke((int)(1.5f*density), Color.parseColor("#BDBDBD"));
+        addCardBg.setCornerRadius(8 * density);
+        addCard.setBackground(addCardBg);
+
+        GridLayout.LayoutParams addParams = new GridLayout.LayoutParams();
+        addParams.width  = cardSize - (int)(8*density);
+        addParams.height = cardHeight; // 일기 카드와 동일한 고정 높이
+        addParams.setMargins(
+                (int)(4*density), (int)(4*density),
+                (int)(4*density), (int)(4*density));
+        addCard.setLayoutParams(addParams);
+
+        TextView tvPlus = new TextView(this);
+        tvPlus.setText("+");
+        tvPlus.setTextSize(36f);
+        tvPlus.setTextColor(Color.parseColor("#1976D2"));
+        tvPlus.setGravity(Gravity.CENTER);
+        addCard.addView(tvPlus);
+
+        addCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearEditor();
+                scrollDiaryEditor.setVisibility(View.VISIBLE);
+                isEditorOpen = true;
+            }
+        });
+
+        gridDiaryCards.addView(addCard);
     }
 
     private void clearEditor() {

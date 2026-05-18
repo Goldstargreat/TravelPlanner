@@ -1,72 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/colorBackground">
 
+    <!-- 메인 화면: 헤더 + 카드 그리드 -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:gravity="center_vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="새 일기 공개 설정"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="14sp" />
+        <!-- 커스텀 헤더 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:background="@color/colorPrimary"
+            android:gravity="center_vertical"
+            android:paddingStart="4dp"
+            android:paddingEnd="16dp">
 
-        <RadioGroup
-            android:id="@+id/radioGroupVisibility"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/btnBackDiary"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@android:drawable/ic_media_previous"
+                android:background="@android:color/transparent"
+                android:contentDescription="뒤로가기"
+                app:tint="@color/white" />
 
-            <RadioButton
-                android:id="@+id/radioPublic"
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="공개"
-                android:textSize="13sp"
-                android:checked="true" />
+                android:layout_weight="1"
+                android:text="여행 일기"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-            <RadioButton
-                android:id="@+id/radioPrivate"
-                android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <!-- 카드 그리드 -->
+        <ScrollView
+            android:id="@+id/scrollDiaryList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <GridLayout
+                android:id="@+id/gridDiaryCards"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="비공개"
-                android:textSize="13sp"
-                android:layout_marginStart="8dp" />
-        </RadioGroup>
+                android:columnCount="2"
+                android:padding="8dp" />
+
+        </ScrollView>
+
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider" />
-
-    <GridLayout
-        android:id="@+id/gridDiaryCards"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:padding="8dp" />
-
+    <!-- 에디터 오버레이: 새 일기 작성 시 전체 덮음 -->
     <ScrollView
         android:id="@+id/scrollDiaryEditor"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground"
         android:visibility="gone">
 
         <LinearLayout
@@ -95,7 +92,31 @@
                 android:background="@drawable/input_background"
                 android:padding="8dp"
                 android:textSize="14sp"
-                android:inputType="date" />
+                android:inputType="text" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupVisibility"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <RadioButton
+                    android:id="@+id/radioPublic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="공개"
+                    android:textSize="13sp"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/radioPrivate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="비공개"
+                    android:textSize="13sp"
+                    android:layout_marginStart="8dp" />
+            </RadioGroup>
 
             <EditText
                 android:id="@+id/etDiaryContent"
@@ -119,6 +140,15 @@
                 android:gravity="end">
 
                 <Button
+                    android:id="@+id/btnCancelDiary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="취소"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@android:color/transparent"
+                    android:paddingHorizontal="16dp" />
+
+                <Button
                     android:id="@+id/btnShareDiary"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
@@ -140,32 +170,12 @@
         </LinearLayout>
     </ScrollView>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:background="@color/white"
-        android:paddingStart="16dp"
-        android:paddingEnd="8dp">
+    <!-- 사용하지 않지만 Java 코드 참조 오류 방지용 더미 뷰 -->
+    <ImageButton
+        android:id="@+id/btnNewDiary"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:contentDescription="새 일기" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="새 일기 작성"
-            android:textColor="@color/colorTextSecondary"
-            android:textSize="14sp" />
-
-        <ImageButton
-            android:id="@+id/btnNewDiary"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="8dp"
-            android:src="@android:drawable/ic_input_add"
-            android:background="@color/colorPrimary"
-            android:contentDescription="새 일기 작성"
-            app:tint="@color/white" />
-    </RelativeLayout>
-
-</LinearLayout>
+</FrameLayout>
