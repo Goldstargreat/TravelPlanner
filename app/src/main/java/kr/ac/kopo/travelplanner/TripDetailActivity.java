@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -49,8 +48,7 @@ public class TripDetailActivity extends AppCompatActivity {
         }
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(trip.getName());
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().hide();
         }
 
         tvDetailTripName    = (TextView)    findViewById(R.id.tvDetailTripName);
@@ -63,6 +61,14 @@ public class TripDetailActivity extends AppCompatActivity {
         tvDetailTripName.setText(trip.getName());
         tvDetailDestination.setText(trip.getDestination());
         tvDetailDate.setText(trip.getDateRange());
+
+        ImageButton btnBack = (ImageButton) findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         ImageButton btnAdd = (ImageButton) findViewById(R.id.btnAddSchedule);
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -97,14 +103,6 @@ public class TripDetailActivity extends AppCompatActivity {
         refreshTable();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
