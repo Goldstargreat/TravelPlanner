@@ -61,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
         listViewTrips.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // 마지막 항목(+ 카드) 클릭 시 여행 추가 다이얼로그
+                if (position == currentList.size()) {
+                    showAddTripDialog();
+                    return;
+                }
                 Trip trip = currentList.get(position);
                 Intent intent = new Intent(MainActivity.this, TripDetailActivity.class);
                 intent.putExtra("trip_id", trip.getId());
@@ -72,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                            int position, long id) {
+                // + 카드는 롱클릭 무시
+                if (position == currentList.size()) return true;
+
                 final Trip trip = currentList.get(position);
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("여행 삭제")
@@ -110,11 +118,8 @@ public class MainActivity extends AppCompatActivity {
         currentList = dm.getSortedTrips(sortType);
         adapter = new TripAdapter(this, currentList);
         listViewTrips.setAdapter(adapter);
-        if (currentList.isEmpty()) {
-            tvEmpty.setVisibility(View.VISIBLE);
-        } else {
-            tvEmpty.setVisibility(View.GONE);
-        }
+        // + 카드가 항상 있으므로 tvEmpty는 사용하지 않음
+        tvEmpty.setVisibility(View.GONE);
     }
 
     private void showAddTripDialog() {
