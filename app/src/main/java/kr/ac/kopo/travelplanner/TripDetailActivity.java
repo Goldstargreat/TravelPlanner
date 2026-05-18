@@ -19,8 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
-public class TripDetailActivity extends AppCompatActivity {
-
+public class TripDetailActivity extends AppCompatActivity
+{
     private Trip trip;
     private DataManager dm;
     private TableLayout tableSchedules;
@@ -31,7 +31,8 @@ public class TripDetailActivity extends AppCompatActivity {
     private ImageView ivTripCover;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_detail);
 
@@ -39,13 +40,15 @@ public class TripDetailActivity extends AppCompatActivity {
         int tripId = getIntent().getIntExtra("trip_id", -1);
         trip = dm.getTripById(tripId);
 
-        if (trip == null) {
+        if (trip == null)
+        {
             Toast.makeText(this, "여행 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        if (getSupportActionBar() != null) {
+        if (getSupportActionBar() != null)
+        {
             getSupportActionBar().hide();
         }
 
@@ -61,17 +64,21 @@ public class TripDetailActivity extends AppCompatActivity {
         tvDetailDate.setText(trip.getDateRange());
 
         ImageButton btnBack = (ImageButton) findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(new View.OnClickListener() {
+        btnBack.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 finish();
             }
         });
 
         ImageButton btnGallery = (ImageButton) findViewById(R.id.btnGoGallery);
-        btnGallery.setOnClickListener(new View.OnClickListener() {
+        btnGallery.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent intent = new Intent(TripDetailActivity.this, PhotoGalleryActivity.class);
                 intent.putExtra("trip_id", trip.getId());
                 startActivity(intent);
@@ -79,9 +86,11 @@ public class TripDetailActivity extends AppCompatActivity {
         });
 
         ImageButton btnDiary = (ImageButton) findViewById(R.id.btnGoDiary);
-        btnDiary.setOnClickListener(new View.OnClickListener() {
+        btnDiary.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent intent = new Intent(TripDetailActivity.this, DiaryActivity.class);
                 intent.putExtra("trip_id", trip.getId());
                 startActivity(intent);
@@ -92,30 +101,36 @@ public class TripDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
         refreshTable();
     }
 
-    private void refreshTable() {
+    private void refreshTable()
+    {
         int childCount = tableSchedules.getChildCount();
-        if (childCount > 1) {
+        if (childCount > 1)
+        {
             tableSchedules.removeViews(1, childCount - 1);
         }
 
         List<Schedule> schedules = trip.getSchedules();
-        if (schedules.isEmpty()) {
+        if (schedules.isEmpty())
+        {
             tvEmpty.setVisibility(View.VISIBLE);
             return;
         }
         tvEmpty.setVisibility(View.GONE);
 
-        for (int i = 0; i < schedules.size(); i++) {
+        for (int i = 0; i < schedules.size(); i++)
+        {
             addScheduleRow(schedules.get(i), i);
         }
     }
 
-    private void addScheduleRow(final Schedule s, final int index) {
+    private void addScheduleRow(final Schedule s, final int index)
+    {
         TableRow row = new TableRow(this);
         row.setPadding(4, 4, 4, 4);
         row.setBackgroundColor(index % 2 == 0 ? Color.WHITE : 0xFFF5F5F5);
@@ -131,16 +146,18 @@ public class TripDetailActivity extends AppCompatActivity {
         tvPlace.setTextSize(12);
         tvPlace.setPadding(6, 6, 6, 6);
         tvPlace.setTextColor(Color.parseColor("#212121"));
-        TableRow.LayoutParams placeParams = new TableRow.LayoutParams(
-                0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
+        TableRow.LayoutParams placeParams = new TableRow.LayoutParams
+                (0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
         tvPlace.setLayoutParams(placeParams);
 
         CheckBox cbDone = new CheckBox(this);
         cbDone.setChecked(s.isCompleted());
         cbDone.setPadding(6, 6, 6, 6);
-        cbDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cbDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
                 s.setCompleted(isChecked);
             }
         });
@@ -150,15 +167,19 @@ public class TripDetailActivity extends AppCompatActivity {
         row.addView(tvPlace);
         row.addView(cbDone);
 
-        row.setOnLongClickListener(new View.OnLongClickListener() {
+        row.setOnLongClickListener(new View.OnLongClickListener()
+        {
             @Override
-            public boolean onLongClick(View v) {
+            public boolean onLongClick(View v)
+            {
                 new AlertDialog.Builder(TripDetailActivity.this)
                         .setTitle("일정 삭제")
                         .setMessage("'" + s.getPlaceName() + "' 일정을 삭제하시겠습니까?")
-                        .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("삭제", new DialogInterface.OnClickListener()
+                        {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            public void onClick(DialogInterface dialog, int which)
+                            {
                                 trip.removeSchedule(index);
                                 refreshTable();
                                 Toast.makeText(TripDetailActivity.this,
@@ -175,14 +196,15 @@ public class TripDetailActivity extends AppCompatActivity {
         tableSchedules.addView(row);
     }
 
-    private TextView makeCell(String text, int widthDp) {
+    private TextView makeCell(String text, int widthDp)
+    {
         TextView tv = new TextView(this);
         tv.setText(text);
         tv.setPadding(6, 6, 6, 6);
         tv.setTextColor(Color.parseColor("#212121"));
         float density = getResources().getDisplayMetrics().density;
-        TableRow.LayoutParams params = new TableRow.LayoutParams(
-                (int) (widthDp * density), TableRow.LayoutParams.WRAP_CONTENT);
+        TableRow.LayoutParams params = new TableRow.LayoutParams
+                ((int) (widthDp * density), TableRow.LayoutParams.WRAP_CONTENT);
         tv.setLayoutParams(params);
         return tv;
     }
