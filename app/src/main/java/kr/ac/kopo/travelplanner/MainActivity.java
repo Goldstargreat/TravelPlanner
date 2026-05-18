@@ -34,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("여행 플래너");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().hide();
         }
 
         dm = DataManager.getInstance();
