@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -31,7 +32,11 @@ public class DiaryActivity extends AppCompatActivity {
     private EditText etDate;
     private EditText etContent;
     private RadioButton radioPublic;
+    private RadioButton radioPrivate;
     private boolean isEditorOpen = false;
+
+    // 수정 모드일 때 해당 인덱스 저장 (-1이면 새 일기)
+    private int editingIndex = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +51,13 @@ public class DiaryActivity extends AppCompatActivity {
         int tripId = getIntent().getIntExtra("trip_id", -1);
         trip = dm.getTripById(tripId);
 
-        gridDiaryCards    = (GridLayout) findViewById(R.id.gridDiaryCards);
-        scrollDiaryEditor = (ScrollView) findViewById(R.id.scrollDiaryEditor);
-        etTitle           = (EditText)   findViewById(R.id.etDiaryTitle);
-        etDate            = (EditText)   findViewById(R.id.etDiaryDate);
-        etContent         = (EditText)   findViewById(R.id.etDiaryContent);
+        gridDiaryCards    = (GridLayout)  findViewById(R.id.gridDiaryCards);
+        scrollDiaryEditor = (ScrollView)  findViewById(R.id.scrollDiaryEditor);
+        etTitle           = (EditText)    findViewById(R.id.etDiaryTitle);
+        etDate            = (EditText)    findViewById(R.id.etDiaryDate);
+        etContent         = (EditText)    findViewById(R.id.etDiaryContent);
         radioPublic       = (RadioButton) findViewById(R.id.radioPublic);
+        radioPrivate      = (RadioButton) findViewById(R.id.radioPrivate);
 
         ImageButton btnBack = (ImageButton) findViewById(R.id.btnBackDiary);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -67,16 +73,15 @@ public class DiaryActivity extends AppCompatActivity {
 
         refreshDiaryCards();
 
-        // 취소 버튼: 에디터 닫기
+        // 취소 버튼
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scrollDiaryEditor.setVisibility(View.GONE);
-                isEditorOpen = false;
+                closeEditor();
             }
         });
 
-        // 저장 버튼
+        // 저장 버튼 (새 일기 / 수정 모두 처리)
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,23 +95,39 @@ public class DiaryActivity extends AppCompatActivity {
                     return;
                 }
 
+                String dialogTitle = editingIndex >= 0 ? "일기 수정" : "일기 저장";
+                String dialogMsg   = editingIndex >= 0 ? "일기를 수정하시겠습니까?" : "일기를 저장하시겠습니까?";
+
                 new AlertDialog.Builder(DiaryActivity.this)
-                        .setTitle("일기 저장")
-                        .setMessage("일기를 저장하시겠습니까?")
-                        .setPositiveButton("저장", new DialogInterface.OnClickListener() {
+                        .setTitle(dialogTitle)
+                        .setMessage(dialogMsg)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 boolean isPublic = radioPublic.isChecked();
                                 String finalDate = date.isEmpty() ? "-" : date;
-                                DiaryEntry entry = new DiaryEntry(
-                                        title, finalDate, content, isPublic);
-                                trip.addDiary(entry);
+
+                                if (editingIndex >= 0) {
+                                    // 수정 모드: 기존 항목 덮어쓰기
+                                    DiaryEntry entry = trip.getDiaryEntries().get(editingIndex);
+                                    entry.setTitle(title);
+                                    entry.setDate(finalDate);
+                                    entry.setContent(content);
+                                    entry.setPublic(isPublic);
+                                    Toast.makeText(DiaryActivity.this,
+                                            "일기가 수정되었습니다.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // 새 일기 추가
+                                    DiaryEntry entry = new DiaryEntry(
+                                            title, finalDate, content, isPublic);
+                                    trip.addDiary(entry);
+                                    Toast.makeText(DiaryActivity.this,
+                                            getString(R.string.diary_saved),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
                                 refreshDiaryCards();
-                                scrollDiaryEditor.setVisibility(View.GONE);
-                                isEditorOpen = false;
-                                Toast.makeText(DiaryActivity.this,
-                                        getString(R.string.diary_saved),
-                                        Toast.LENGTH_SHORT).show();
+                                closeEditor();
                             }
                         })
                         .setNegativeButton("취소", null)
@@ -136,28 +157,43 @@ public class DiaryActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            if (isEditorOpen) {
-                // 에디터가 열려 있으면 먼저 닫기
-                scrollDiaryEditor.setVisibility(View.GONE);
-                isEditorOpen = false;
-            } else {
-                finish();
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onBackPressed() {
         if (isEditorOpen) {
-            scrollDiaryEditor.setVisibility(View.GONE);
-            isEditorOpen = false;
+            closeEditor();
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void closeEditor() {
+        scrollDiaryEditor.setVisibility(View.GONE);
+        isEditorOpen = false;
+        editingIndex = -1;
+    }
+
+    private void openEditorForNew() {
+        editingIndex = -1;
+        etTitle.setText("");
+        etDate.setText("");
+        etContent.setText("");
+        radioPublic.setChecked(true);
+        scrollDiaryEditor.setVisibility(View.VISIBLE);
+        isEditorOpen = true;
+    }
+
+    private void openEditorForEdit(int index) {
+        DiaryEntry entry = trip.getDiaryEntries().get(index);
+        editingIndex = index;
+        etTitle.setText(entry.getTitle());
+        etDate.setText(entry.getDate());
+        etContent.setText(entry.getContent());
+        if (entry.isPublic()) {
+            radioPublic.setChecked(true);
+        } else {
+            radioPrivate.setChecked(true);
+        }
+        scrollDiaryEditor.setVisibility(View.VISIBLE);
+        isEditorOpen = true;
     }
 
     private void refreshDiaryCards() {
@@ -167,9 +203,8 @@ public class DiaryActivity extends AppCompatActivity {
         int cols = 2;
         int cardSize = (int) ((getResources().getDisplayMetrics().widthPixels
                 - (int)(16 * density)) / cols);
-        int cardHeight = (int)(160 * density); // 고정 높이로 카드 균일하게
+        int cardHeight = (int)(160 * density);
 
-        // 기존 일기 카드 추가
         for (int i = 0; i < trip.getDiaryEntries().size(); i++) {
             final int index = i;
             final DiaryEntry entry = trip.getDiaryEntries().get(i);
@@ -180,7 +215,6 @@ public class DiaryActivity extends AppCompatActivity {
                     (int)(10*density), (int)(10*density),
                     (int)(10*density), (int)(10*density));
 
-            // 흰색 배경 + 연한 회색 테두리
             GradientDrawable cardBg = new GradientDrawable();
             cardBg.setColor(Color.WHITE);
             cardBg.setStroke((int)(1*density), Color.parseColor("#E0E0E0"));
@@ -189,7 +223,7 @@ public class DiaryActivity extends AppCompatActivity {
 
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width  = cardSize - (int)(8*density);
-            params.height = cardHeight; // 고정 높이
+            params.height = cardHeight;
             params.setMargins(
                     (int)(4*density), (int)(4*density),
                     (int)(4*density), (int)(4*density));
@@ -199,7 +233,7 @@ public class DiaryActivity extends AppCompatActivity {
             tvCardTitle.setText(entry.getTitle());
             tvCardTitle.setTextSize(14f);
             tvCardTitle.setTextColor(Color.parseColor("#212121"));
-            tvCardTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+            tvCardTitle.setTypeface(null, Typeface.BOLD);
             tvCardTitle.setMaxLines(1);
 
             TextView tvCardDate = new TextView(this);
@@ -224,35 +258,48 @@ public class DiaryActivity extends AppCompatActivity {
             TextView tvVisibility = new TextView(this);
             tvVisibility.setText(entry.isPublic() ? "공개" : "비공개");
             tvVisibility.setTextSize(11f);
-            if (entry.isPublic()) {
-                tvVisibility.setTextColor(Color.parseColor("#1976D2"));
-            } else {
-                tvVisibility.setTextColor(Color.parseColor("#757575"));
-            }
+            tvVisibility.setTextColor(entry.isPublic()
+                    ? Color.parseColor("#1976D2")
+                    : Color.parseColor("#757575"));
 
             card.addView(tvCardTitle);
             card.addView(tvCardDate);
             card.addView(tvPreview);
             card.addView(tvVisibility);
 
-            // 길게 누르면 삭제
+            // 길게 누르면 수정 / 삭제 선택 다이얼로그
             card.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     new AlertDialog.Builder(DiaryActivity.this)
-                            .setTitle("일기 삭제")
-                            .setMessage("'" + entry.getTitle() + "' 일기를 삭제하시겠습니까?")
-                            .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    trip.removeDiary(index);
-                                    refreshDiaryCards();
-                                    Toast.makeText(DiaryActivity.this,
-                                            getString(R.string.deleted),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton("취소", null)
+                            .setTitle(entry.getTitle())
+                            .setItems(new String[]{"수정하기", "삭제하기"},
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (which == 0) {
+                                                // 수정
+                                                openEditorForEdit(index);
+                                            } else {
+                                                // 삭제 확인
+                                                new AlertDialog.Builder(DiaryActivity.this)
+                                                        .setTitle("일기 삭제")
+                                                        .setMessage("'" + entry.getTitle() + "' 일기를 삭제하시겠습니까?")
+                                                        .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface d, int w) {
+                                                                trip.removeDiary(index);
+                                                                refreshDiaryCards();
+                                                                Toast.makeText(DiaryActivity.this,
+                                                                        getString(R.string.deleted),
+                                                                        Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        })
+                                                        .setNegativeButton("취소", null)
+                                                        .show();
+                                            }
+                                        }
+                                    })
                             .show();
                     return true;
                 }
@@ -261,12 +308,11 @@ public class DiaryActivity extends AppCompatActivity {
             gridDiaryCards.addView(card);
         }
 
-        // 마지막 칸에 + 추가 카드 (점선 테두리 스타일)
+        // + 카드
         LinearLayout addCard = new LinearLayout(this);
         addCard.setOrientation(LinearLayout.VERTICAL);
         addCard.setGravity(Gravity.CENTER);
 
-        // 흰색 배경 + 점선 테두리
         GradientDrawable addCardBg = new GradientDrawable();
         addCardBg.setColor(Color.WHITE);
         addCardBg.setStroke((int)(1.5f*density), Color.parseColor("#BDBDBD"));
@@ -275,7 +321,7 @@ public class DiaryActivity extends AppCompatActivity {
 
         GridLayout.LayoutParams addParams = new GridLayout.LayoutParams();
         addParams.width  = cardSize - (int)(8*density);
-        addParams.height = cardHeight; // 일기 카드와 동일한 고정 높이
+        addParams.height = cardHeight;
         addParams.setMargins(
                 (int)(4*density), (int)(4*density),
                 (int)(4*density), (int)(4*density));
@@ -291,19 +337,10 @@ public class DiaryActivity extends AppCompatActivity {
         addCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearEditor();
-                scrollDiaryEditor.setVisibility(View.VISIBLE);
-                isEditorOpen = true;
+                openEditorForNew();
             }
         });
 
         gridDiaryCards.addView(addCard);
-    }
-
-    private void clearEditor() {
-        etTitle.setText("");
-        etDate.setText("");
-        etContent.setText("");
-        radioPublic.setChecked(true);
     }
 }

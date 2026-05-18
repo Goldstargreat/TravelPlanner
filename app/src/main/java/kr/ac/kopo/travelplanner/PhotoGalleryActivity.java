@@ -131,7 +131,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         }
 
         if (ContextCompat.checkSelfPermission(this, permission)
-                == PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED)
+        {
             openPhotoPicker();
         } else {
             ActivityCompat.requestPermissions(this,
@@ -139,7 +140,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         }
     }
 
-    private void openPhotoPicker() {
+    private void openPhotoPicker()
+    {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_PICK_PHOTO);
@@ -148,7 +150,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSION_READ) {
             if (grantResults.length > 0
