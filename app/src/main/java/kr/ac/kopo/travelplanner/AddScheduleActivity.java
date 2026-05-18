@@ -4,10 +4,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -30,9 +30,16 @@ public class AddScheduleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_schedule);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("일정 추가");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().hide();
         }
+
+        ImageButton btnBack = (ImageButton) findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCancelDialog();
+            }
+        });
 
         dm = DataManager.getInstance();
         tripId = getIntent().getIntExtra("trip_id", -1);
@@ -100,14 +107,6 @@ public class AddScheduleActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            showCancelDialog();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     private void showCancelDialog() {
         new AlertDialog.Builder(this)

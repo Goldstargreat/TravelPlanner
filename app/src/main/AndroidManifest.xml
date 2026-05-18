@@ -15,17 +15,22 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.TravelPlanner.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".TripDetailActivity" android:exported="false"/>
-        <activity android:name=".AddScheduleActivity" android:exported="false"/>
-        <activity android:name=".PhotoGalleryActivity" android:exported="false"/>
-        <activity android:name=".DiaryActivity" android:exported="false"/>
+        <activity android:name=".TripDetailActivity" android:exported="false"
+            android:theme="@style/Theme.TravelPlanner.NoActionBar"/>
+        <activity android:name=".AddScheduleActivity" android:exported="false"
+            android:theme="@style/Theme.TravelPlanner.NoActionBar"/>
+        <activity android:name=".PhotoGalleryActivity" android:exported="false"
+            android:theme="@style/Theme.TravelPlanner.NoActionBar"/>
+        <activity android:name=".DiaryActivity" android:exported="false"
+            android:theme="@style/Theme.TravelPlanner.NoActionBar"/>
 
     </application>
 </manifest>

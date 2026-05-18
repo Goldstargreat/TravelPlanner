@@ -5,5 +5,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <!-- ActionBar가 필요 없는 Activity에 적용 -->
+    <style name="Theme.TravelPlanner.NoActionBar" parent="Theme.TravelPlanner">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 </resources>

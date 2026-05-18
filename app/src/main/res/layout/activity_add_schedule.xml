@@ -1,163 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/colorBackground">
 
+    <!-- 커스텀 툴바 -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/colorPrimary"
+        android:paddingStart="4dp"
+        android:paddingEnd="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="카테고리"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="14sp"/>
-
-        <Spinner
-            android:id="@+id/spinnerCategory"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/input_background"
-            android:entries="@array/categories"
-            android:padding="8dp"/>
+            android:src="@android:drawable/ic_menu_revert"
+            android:background="@android:color/transparent"
+            android:tint="@color/white"
+            android:contentDescription="뒤로가기"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="날짜 (예: 2024-01-01)"
+            android:text="일정 추가"
+            android:textColor="@color/white"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginStart="4dp"/>
+    </LinearLayout>
 
-        <EditText
-            android:id="@+id/etDate"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="4dp"
-            android:hint="2024-01-01"
-            android:inputType="date"
-            android:background="@drawable/input_background"
-            android:padding="8dp"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="시간 (예: 09:00)"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp"/>
-
-        <EditText
-            android:id="@+id/etTime"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="4dp"
-            android:hint="09:00"
-            android:inputType="time"
-            android:background="@drawable/input_background"
-            android:padding="8dp"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="장소명"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp"/>
-
-        <EditText
-            android:id="@+id/etPlaceName"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="4dp"
-            android:hint="장소 이름을 입력하세요"
-            android:background="@drawable/input_background"
-            android:padding="8dp"
-            android:textSize="14sp"
-            android:inputType="text"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="주소"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp"/>
-
-        <EditText
-            android:id="@+id/etAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:layout_marginTop="4dp"
-            android:hint="주소를 직접 입력하세요"
-            android:background="@drawable/input_background"
-            android:padding="8dp"
-            android:textSize="14sp"
-            android:inputType="textMultiLine"
-            android:lines="2"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="메모"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp"/>
-
-        <EditText
-            android:id="@+id/etMemo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="80dp"
-            android:layout_marginTop="4dp"
-            android:hint="메모를 입력하세요 (선택)"
-            android:background="@drawable/input_background"
-            android:padding="8dp"
-            android:textSize="14sp"
-            android:inputType="textMultiLine"
-            android:gravity="top"
-            android:lines="3"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="24dp"
-            android:gravity="end">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <Button
-                android:id="@+id/btnCancelSchedule"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="취소"
-                android:textColor="@color/colorTextSecondary"
-                android:background="@android:color/transparent"
-                android:paddingHorizontal="16dp"/>
+                android:layout_height="wrap_content"
+                android:text="카테고리"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"/>
 
-            <Button
-                android:id="@+id/btnSaveSchedule"
-                android:layout_width="wrap_content"
+            <Spinner
+                android:id="@+id/spinnerCategory"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="저장"
-                android:textColor="@color/white"
-                android:background="@color/colorPrimary"
-                android:paddingHorizontal="24dp"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginTop="4dp"
+                android:background="@drawable/input_background"
+                android:entries="@array/categories"
+                android:padding="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="날짜 (예: 2024-01-01)"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/etDate"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:hint="2024-01-01"
+                android:inputType="date"
+                android:background="@drawable/input_background"
+                android:padding="8dp"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="시간 (예: 09:00)"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/etTime"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:hint="09:00"
+                android:inputType="time"
+                android:background="@drawable/input_background"
+                android:padding="8dp"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="장소명"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/etPlaceName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:hint="장소 이름을 입력하세요"
+                android:background="@drawable/input_background"
+                android:padding="8dp"
+                android:textSize="14sp"
+                android:inputType="text"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="주소"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/etAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:layout_marginTop="4dp"
+                android:hint="주소를 직접 입력하세요"
+                android:background="@drawable/input_background"
+                android:padding="8dp"
+                android:textSize="14sp"
+                android:inputType="textMultiLine"
+                android:lines="2"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="메모"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/etMemo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="80dp"
+                android:layout_marginTop="4dp"
+                android:hint="메모를 입력하세요 (선택)"
+                android:background="@drawable/input_background"
+                android:padding="8dp"
+                android:textSize="14sp"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:lines="3"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:gravity="end">
+
+                <Button
+                    android:id="@+id/btnCancelSchedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="취소"
+                    android:textColor="@color/colorTextSecondary"
+                    android:background="@android:color/transparent"
+                    android:paddingHorizontal="16dp"/>
+
+                <Button
+                    android:id="@+id/btnSaveSchedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="저장"
+                    android:textColor="@color/white"
+                    android:background="@color/colorPrimary"
+                    android:paddingHorizontal="24dp"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
         </LinearLayout>
+    </ScrollView>
 
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>
