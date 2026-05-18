@@ -118,34 +118,16 @@
         </LinearLayout>
     </LinearLayout>
 
-    <RelativeLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="44dp"
         android:background="@color/white"
         android:paddingStart="16dp"
-        android:paddingEnd="8dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="일정표"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"/>
-
-        <ImageButton
-            android:id="@+id/btnAddSchedule"
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="8dp"
-            android:src="@android:drawable/ic_input_add"
-            android:background="@color/colorPrimary"
-            android:tint="@color/white"
-            android:contentDescription="일정 추가"/>
-    </RelativeLayout>
+        android:gravity="center_vertical"
+        android:text="일정표"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorTextPrimary"/>
 
     <TextView
         android:id="@+id/tvEmptySchedules"

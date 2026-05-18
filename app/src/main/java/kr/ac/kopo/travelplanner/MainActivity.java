@@ -18,8 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity
+{
     private ListView listViewTrips;
     private TripAdapter adapter;
     private Spinner spinnerSort;

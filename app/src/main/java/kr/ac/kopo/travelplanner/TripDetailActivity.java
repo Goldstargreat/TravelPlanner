@@ -21,8 +21,6 @@ import java.util.List;
 
 public class TripDetailActivity extends AppCompatActivity {
 
-    private static final int REQUEST_ADD_SCHEDULE = 100;
-
     private Trip trip;
     private DataManager dm;
     private TableLayout tableSchedules;
@@ -70,16 +68,6 @@ public class TripDetailActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton btnAdd = (ImageButton) findViewById(R.id.btnAddSchedule);
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(TripDetailActivity.this, AddScheduleActivity.class);
-                intent.putExtra("trip_id", trip.getId());
-                startActivityForResult(intent, REQUEST_ADD_SCHEDULE);
-            }
-        });
-
         ImageButton btnGallery = (ImageButton) findViewById(R.id.btnGoGallery);
         btnGallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,16 +89,6 @@ public class TripDetailActivity extends AppCompatActivity {
         });
 
         refreshTable();
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_ADD_SCHEDULE && resultCode == RESULT_OK) {
-            refreshTable();
-            Toast.makeText(this, getString(R.string.schedule_added), Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
