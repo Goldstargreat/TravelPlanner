@@ -1,6 +1,7 @@
 package kr.ac.kopo.travelplanner;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,7 +32,6 @@ public class TripAdapter extends ArrayAdapter<Trip> {
         this.trips = trips;
     }
 
-    // 실제 아이템 수 = 여행 수 + 1(+ 카드)
     @Override
     public int getCount() {
         return trips.size() + 1;
@@ -46,10 +47,9 @@ public class TripAdapter extends ArrayAdapter<Trip> {
         return (position == trips.size()) ? TYPE_ADD : TYPE_TRIP;
     }
 
-    // + 카드는 클릭 가능하지 않게 처리 (MainActivity에서 직접 처리)
     @Override
     public boolean isEnabled(int position) {
-        return true; // 둘 다 클릭 가능하게 유지
+        return true;
     }
 
     @Override
@@ -73,23 +73,26 @@ public class TripAdapter extends ArrayAdapter<Trip> {
             convertView = LayoutInflater.from(context)
                     .inflate(R.layout.list_item_trip, parent, false);
             holder = new ViewHolder();
-            holder.ivThumb       = (ImageView) convertView.findViewById(R.id.ivTripThumb);
-            holder.tvName        = (TextView)  convertView.findViewById(R.id.tvTripName);
-            holder.tvDestination = (TextView)  convertView.findViewById(R.id.tvTripDestination);
-            holder.tvDate        = (TextView)  convertView.findViewById(R.id.tvTripDate);
-            holder.tvCount       = (TextView)  convertView.findViewById(R.id.tvScheduleCount);
+            holder.ivThumb       = (ImageView)   convertView.findViewById(R.id.ivTripThumb);
+            holder.tvName        = (TextView)    convertView.findViewById(R.id.tvTripName);
+            holder.tvDestination = (TextView)    convertView.findViewById(R.id.tvTripDestination);
+            holder.tvDate        = (TextView)    convertView.findViewById(R.id.tvTripDate);
+            holder.tvCount       = (TextView)    convertView.findViewById(R.id.tvScheduleCount);
+            holder.btnGallery    = (ImageButton) convertView.findViewById(R.id.btnItemGallery);
+            holder.btnDiary      = (ImageButton) convertView.findViewById(R.id.btnItemDiary);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Trip trip = trips.get(position);
+        final Trip trip = trips.get(position);
+
         holder.tvName.setText(trip.getName());
         holder.tvDestination.setText(trip.getDestination());
         holder.tvDate.setText(trip.getDateRange());
         holder.tvCount.setText(trip.getScheduleCount() + "개 일정");
 
-        if (trip.getCoverImagePath() != null && !trip.getCoverImagePath().equals("")) {
+        if (trip.getCoverImagePath() != null && !trip.getCoverImagePath().isEmpty()) {
             File imgFile = new File(trip.getCoverImagePath());
             if (imgFile.exists()) {
                 holder.ivThumb.setImageBitmap(
@@ -100,6 +103,32 @@ public class TripAdapter extends ArrayAdapter<Trip> {
         } else {
             holder.ivThumb.setImageResource(android.R.drawable.ic_menu_gallery);
         }
+
+        // 갤러리 버튼 — setTag로 trip 저장해 재사용 오류 방지
+        holder.btnGallery.setTag(trip);
+        holder.btnGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Trip t = (Trip) v.getTag();
+                Intent intent = new Intent(context, PhotoGalleryActivity.class);
+                intent.putExtra("trip_id", t.getId());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
+
+        // 일기 버튼
+        holder.btnDiary.setTag(trip);
+        holder.btnDiary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Trip t = (Trip) v.getTag();
+                Intent intent = new Intent(context, DiaryActivity.class);
+                intent.putExtra("trip_id", t.getId());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
 
         return convertView;
     }
@@ -136,6 +165,8 @@ public class TripAdapter extends ArrayAdapter<Trip> {
         TextView tvDestination;
         TextView tvDate;
         TextView tvCount;
+        ImageButton btnGallery;
+        ImageButton btnDiary;
     }
 
     static class AddViewHolder { }

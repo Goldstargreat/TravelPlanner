@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorCardBg"
@@ -53,17 +54,48 @@
         android:textSize="12sp"
         android:textColor="@color/colorTextSecondary"/>
 
+    <!-- 오른쪽 상단: 일정 수 뱃지 -->
     <TextView
         android:id="@+id/tvScheduleCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
+        android:layout_alignTop="@id/ivTripThumb"
         android:text="0개 일정"
         android:textSize="12sp"
         android:textColor="@color/colorPrimary"
         android:background="@drawable/badge_background"
         android:paddingHorizontal="8dp"
         android:paddingVertical="4dp"/>
+
+    <!-- 오른쪽 하단: 갤러리 / 일기 버튼 -->
+    <LinearLayout
+        android:id="@+id/layoutQuickButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/ivTripThumb"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnItemGallery"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:background="@android:color/transparent"
+            app:tint="@color/colorPrimary"
+            android:contentDescription="사진첩" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnItemDiary"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_menu_edit"
+            android:background="@android:color/transparent"
+            app:tint="@color/colorPrimary"
+            android:layout_marginStart="4dp"
+            android:contentDescription="여행 일기" />
+    </LinearLayout>
 
 </RelativeLayout>

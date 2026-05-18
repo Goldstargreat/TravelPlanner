@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:background="@color/colorBackground">
 
+    <!-- 상단 헤더 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,13 +21,13 @@
             android:gravity="center_vertical"
             android:layout_marginBottom="8dp">
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btnBack"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@android:drawable/ic_menu_revert"
                 android:background="@android:color/transparent"
-                android:tint="@color/white"
+                app:tint="@color/white"
                 android:contentDescription="뒤로가기" />
 
             <TextView
@@ -98,27 +99,28 @@
             android:layout_marginTop="8dp"
             android:gravity="end">
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btnGoGallery"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@android:drawable/ic_menu_gallery"
                 android:background="@android:color/transparent"
-                android:contentDescription="사진첩"
-                app:tint="@color/white" />
+                app:tint="@color/white"
+                android:contentDescription="사진첩" />
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btnGoDiary"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@android:drawable/ic_menu_edit"
                 android:background="@android:color/transparent"
+                app:tint="@color/white"
                 android:layout_marginStart="8dp"
-                android:contentDescription="여행 일기"
-                app:tint="@color/white" />
+                android:contentDescription="여행 일기" />
         </LinearLayout>
     </LinearLayout>
 
+    <!-- 일정표 타이틀 -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="44dp"
@@ -130,73 +132,95 @@
         android:textStyle="bold"
         android:textColor="@color/colorTextPrimary"/>
 
-    <TextView
-        android:id="@+id/tvEmptySchedules"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="32dp"
-        android:text="@string/no_schedules"
-        android:textColor="@color/colorTextSecondary"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:visibility="gone"/>
-
+    <!-- 스크롤 영역: 빈 메시지 + 테이블 함께 포함 -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <TableLayout
-            android:id="@+id/tableSchedules"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="2"
-            android:padding="4dp">
+            android:orientation="vertical">
 
-            <TableRow
+            <!-- 빈 일정 메시지 (ScrollView 안으로 이동) -->
+            <TextView
+                android:id="@+id/tvEmptySchedules"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary">
+                android:layout_marginTop="48dp"
+                android:text="@string/no_schedules"
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:visibility="gone"/>
 
-                <TextView
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:text="날짜"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:padding="8dp"
-                    android:textSize="13sp"/>
+            <TableLayout
+                android:id="@+id/tableSchedules"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="2"
+                android:padding="4dp">
 
-                <TextView
-                    android:layout_width="50dp"
+                <!-- 헤더 행 -->
+                <TableRow
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="시간"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:padding="8dp"
-                    android:textSize="13sp"/>
+                    android:background="@color/colorPrimary">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="장소/활동"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:padding="8dp"
-                    android:textSize="13sp"/>
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:text="날짜"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:padding="8dp"
+                        android:textSize="13sp"/>
 
-                <TextView
-                    android:layout_width="44dp"
-                    android:layout_height="wrap_content"
-                    android:text="완료"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:padding="8dp"
-                    android:textSize="13sp"/>
-            </TableRow>
-        </TableLayout>
+                    <TextView
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="시간"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:padding="8dp"
+                        android:textSize="13sp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="장소/활동"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:padding="8dp"
+                        android:textSize="13sp"/>
+
+                    <TextView
+                        android:layout_width="44dp"
+                        android:layout_height="wrap_content"
+                        android:text="완료"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:padding="8dp"
+                        android:textSize="13sp"/>
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
     </ScrollView>
+
+    <!-- 일정 추가 FAB -->
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btnAddSchedule"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="end"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_input_add"
+        android:background="@drawable/fab_background"
+        android:contentDescription="일정 추가"
+        android:elevation="6dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
 
 </LinearLayout>

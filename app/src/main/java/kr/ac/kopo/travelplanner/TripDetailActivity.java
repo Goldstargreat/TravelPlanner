@@ -16,11 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageButton;
 
 import java.util.List;
 
 public class TripDetailActivity extends AppCompatActivity
 {
+    private static final int REQUEST_ADD_SCHEDULE = 100;
+
     private Trip trip;
     private DataManager dm;
     private TableLayout tableSchedules;
@@ -63,7 +66,8 @@ public class TripDetailActivity extends AppCompatActivity
         tvDetailDestination.setText(trip.getDestination());
         tvDetailDate.setText(trip.getDateRange());
 
-        ImageButton btnBack = (ImageButton) findViewById(R.id.btnBack);
+        // 뒤로가기 버튼
+        AppCompatImageButton btnBack = (AppCompatImageButton) findViewById(R.id.btnBack);
         btnBack.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -73,7 +77,8 @@ public class TripDetailActivity extends AppCompatActivity
             }
         });
 
-        ImageButton btnGallery = (ImageButton) findViewById(R.id.btnGoGallery);
+        // 갤러리 버튼
+        AppCompatImageButton btnGallery = (AppCompatImageButton) findViewById(R.id.btnGoGallery);
         btnGallery.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -85,7 +90,8 @@ public class TripDetailActivity extends AppCompatActivity
             }
         });
 
-        ImageButton btnDiary = (ImageButton) findViewById(R.id.btnGoDiary);
+        // 일기 버튼
+        AppCompatImageButton btnDiary = (AppCompatImageButton) findViewById(R.id.btnGoDiary);
         btnDiary.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -97,7 +103,30 @@ public class TripDetailActivity extends AppCompatActivity
             }
         });
 
+        // 일정 추가 FAB 버튼
+        AppCompatImageButton btnAddSchedule = (AppCompatImageButton) findViewById(R.id.btnAddSchedule);
+        btnAddSchedule.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(TripDetailActivity.this, AddScheduleActivity.class);
+                intent.putExtra("trip_id", trip.getId());
+                startActivityForResult(intent, REQUEST_ADD_SCHEDULE);
+            }
+        });
+
         refreshTable();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ADD_SCHEDULE && resultCode == RESULT_OK)
+        {
+            refreshTable();
+        }
     }
 
     @Override
@@ -109,6 +138,7 @@ public class TripDetailActivity extends AppCompatActivity
 
     private void refreshTable()
     {
+        // 헤더 행(index 0)은 유지하고 나머지만 제거
         int childCount = tableSchedules.getChildCount();
         if (childCount > 1)
         {
