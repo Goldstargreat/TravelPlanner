@@ -129,33 +129,59 @@ public class MainActivity extends AppCompatActivity
         final EditText etStart = (EditText) dialogView.findViewById(R.id.etStartDate);
         final EditText etEnd   = (EditText) dialogView.findViewById(R.id.etEndDate);
 
-        new AlertDialog.Builder(this)
-                .setTitle("새 여행 추가")
+        final AlertDialog dialog = new AlertDialog.Builder(this)
                 .setView(dialogView)
-                .setPositiveButton("추가", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String name  = etName.getText().toString().trim();
-                        String dest  = etDest.getText().toString().trim();
-                        String start = etStart.getText().toString().trim();
-                        String end   = etEnd.getText().toString().trim();
+                .create();
 
-                        if (name.isEmpty()) {
-                            Toast.makeText(MainActivity.this,
-                                    "여행 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        if (dest.isEmpty())  dest  = "미정";
-                        if (start.isEmpty()) start = "-";
-                        if (end.isEmpty())   end   = "-";
+        // 전체화면 스타일 적용
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT);
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
 
-                        dm.addTrip(name, dest, start, end);
-                        refreshList(spinnerSort.getSelectedItemPosition());
-                        Toast.makeText(MainActivity.this,
-                                "여행이 추가되었습니다.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("취소", null)
-                .show();
+        // 추가 버튼
+        dialogView.findViewById(R.id.btnConfirmAddTrip).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name  = etName.getText().toString().trim();
+                String dest  = etDest.getText().toString().trim();
+                String start = etStart.getText().toString().trim();
+                String end   = etEnd.getText().toString().trim();
+
+                if (name.isEmpty()) {
+                    Toast.makeText(MainActivity.this,
+                            "여행 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (dest.isEmpty())  dest  = "미정";
+                if (start.isEmpty()) start = "-";
+                if (end.isEmpty())   end   = "-";
+
+                dm.addTrip(name, dest, start, end);
+                refreshList(spinnerSort.getSelectedItemPosition());
+                Toast.makeText(MainActivity.this,
+                        "여행이 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+        // 취소 버튼
+        dialogView.findViewById(R.id.btnCancelAddTrip).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+        // show() 이후에 다시 적용 (일부 기기 대응)
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT);
+        }
     }
 }
