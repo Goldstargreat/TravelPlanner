@@ -30,8 +30,8 @@ import androidx.core.content.ContextCompat;
 import java.io.IOException;
 import java.util.List;
 
-public class PhotoGalleryActivity extends AppCompatActivity {
-
+public class PhotoGalleryActivity extends AppCompatActivity
+{
     private static final int REQUEST_PICK_PHOTO       = 200;
     private static final int REQUEST_PERMISSION_READ  = 300;
 
@@ -48,11 +48,13 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private int selectedPhotoIndex = -1;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_gallery);
 
-        if (getSupportActionBar() != null) {
+        if (getSupportActionBar() != null)
+        {
             getSupportActionBar().hide();
         }
 
@@ -61,9 +63,11 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         trip = dm.getTripById(tripId);
 
         ImageButton btnBack = (ImageButton) findViewById(R.id.btnBackGallery);
-        btnBack.setOnClickListener(new View.OnClickListener() {
+        btnBack.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 finish();
             }
         });
@@ -78,41 +82,52 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
         refreshGallery();
 
-        gridViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridViewPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
                 selectedPhotoIndex = position;
                 showPhotoDetail(position);
             }
         });
 
-        gridViewPhotos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        gridViewPhotos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+        {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                           int position, long id) {
+                                           int position, long id)
+            {
                 confirmDeletePhoto(position);
                 return true;
             }
         });
 
-        btnAddPhoto.setOnClickListener(new View.OnClickListener() {
+        btnAddPhoto.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 checkPermissionAndPickPhoto();
             }
         });
 
-        btnCloseDetail.setOnClickListener(new View.OnClickListener() {
+        btnCloseDetail.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 layoutPhotoDetail.setVisibility(View.GONE);
             }
         });
 
-        btnDeletePhoto.setOnClickListener(new View.OnClickListener() {
+        btnDeletePhoto.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                if (selectedPhotoIndex >= 0) {
+            public void onClick(View v)
+            {
+                if (selectedPhotoIndex >= 0)
+                {
                     confirmDeletePhoto(selectedPhotoIndex);
                 }
             }
@@ -120,12 +135,15 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     }
 
     // 권한 확인 후 갤러리 열기
-    private void checkPermissionAndPickPhoto() {
+    private void checkPermissionAndPickPhoto()
+    {
         String permission;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        {
             // Android 13 이상
             permission = Manifest.permission.READ_MEDIA_IMAGES;
-        } else {
+        } else
+        {
             // Android 12 이하
             permission = Manifest.permission.READ_EXTERNAL_STORAGE;
         }
@@ -134,7 +152,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                 == PackageManager.PERMISSION_GRANTED)
         {
             openPhotoPicker();
-        } else {
+        } else
+        {
             ActivityCompat.requestPermissions(this,
                     new String[]{permission}, REQUEST_PERMISSION_READ);
         }
@@ -153,11 +172,14 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                                            @NonNull int[] grantResults)
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSION_READ) {
+        if (requestCode == REQUEST_PERMISSION_READ)
+        {
             if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
                 openPhotoPicker();
-            } else {
+            } else
+            {
                 Toast.makeText(this,
                         "사진 접근 권한이 필요합니다. 설정에서 권한을 허용해주세요.",
                         Toast.LENGTH_LONG).show();
@@ -166,7 +188,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         if (layoutPhotoDetail.getVisibility() == View.VISIBLE) {
             layoutPhotoDetail.setVisibility(View.GONE);
         } else {
@@ -175,7 +198,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PICK_PHOTO && resultCode == RESULT_OK && data != null) {
             Uri selectedUri = data.getData();
@@ -187,7 +211,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         }
     }
 
-    private void refreshGallery() {
+    private void refreshGallery()
+    {
         List<String> photos = trip.getPhotoPaths();
         boolean isEmpty = photos.isEmpty();
         tvNoPhotos.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
@@ -195,10 +220,12 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         gridViewPhotos.setAdapter(new PhotoGridAdapter());
     }
 
-    private void showPhotoDetail(int position) {
+    private void showPhotoDetail(int position)
+    {
         String path = trip.getPhotoPaths().get(position);
         Bitmap bm = getBitmapFromPath(path);
-        if (bm != null) {
+        if (bm != null)
+        {
             ivPhotoDetail.setImageBitmap(bm);
             layoutPhotoDetail.setVisibility(View.VISIBLE);
         } else {
@@ -206,13 +233,16 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         }
     }
 
-    private void confirmDeletePhoto(final int index) {
+    private void confirmDeletePhoto(final int index)
+    {
         new AlertDialog.Builder(this)
                 .setTitle("사진 삭제")
                 .setMessage("이 사진을 삭제하시겠습니까?")
-                .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                .setPositiveButton("삭제", new DialogInterface.OnClickListener()
+                {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
                         trip.removePhoto(index);
                         layoutPhotoDetail.setVisibility(View.GONE);
                         selectedPhotoIndex = -1;
