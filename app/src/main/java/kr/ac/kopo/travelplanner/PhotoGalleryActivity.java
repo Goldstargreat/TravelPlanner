@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -79,6 +80,23 @@ public class PhotoGalleryActivity extends AppCompatActivity
         btnAddPhoto       = (ImageButton)    findViewById(R.id.btnAddPhoto);
         btnCloseDetail    = (ImageButton)    findViewById(R.id.btnCloseDetail);
         btnDeletePhoto    = (ImageButton)    findViewById(R.id.btnDeletePhoto);
+
+        // onBackPressed 대체 - layoutPhotoDetail 초기화 이후에 등록
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true)
+        {
+            @Override
+            public void handleOnBackPressed()
+            {
+                if (layoutPhotoDetail.getVisibility() == View.VISIBLE)
+                {
+                    layoutPhotoDetail.setVisibility(View.GONE);
+                } else
+                {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
 
         refreshGallery();
 
@@ -184,16 +202,6 @@ public class PhotoGalleryActivity extends AppCompatActivity
                         "사진 접근 권한이 필요합니다. 설정에서 권한을 허용해주세요.",
                         Toast.LENGTH_LONG).show();
             }
-        }
-    }
-
-    @Override
-    public void onBackPressed()
-    {
-        if (layoutPhotoDetail.getVisibility() == View.VISIBLE) {
-            layoutPhotoDetail.setVisibility(View.GONE);
-        } else {
-            super.onBackPressed();
         }
     }
 
